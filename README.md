@@ -88,6 +88,7 @@ python3 main.py
 ```bash
 cd manager-app
 mvn clean install
+mvn compile exec:java -Dexec.mainClass=com.revature.Main 
 ```
 Run `Main.java` from your IDE
 

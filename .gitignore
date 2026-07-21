@@ -219,3 +219,6 @@ __marimo__/
 
 .idea/workspace.xml
 .claude
+
+# IntelliJ build output (Java .class files / copied resources)
+out/

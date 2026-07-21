@@ -44,6 +44,15 @@
       <artifactId>slf4j-simple</artifactId>
       <version>2.0.18</version>
     </dependency>
+    <!-- Pin the slf4j API to match slf4j-simple above. sqlite-jdbc pulls in
+         slf4j-api 1.7.36 transitively, and the 1.7 API can't bind to a 2.x
+         implementation - it looks for StaticLoggerBinder, doesn't find it, and
+         silently falls back to a no-op logger that drops every log line. -->
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-api</artifactId>
+      <version>2.0.18</version>
+    </dependency>
     <!--Jackson lets us make Java <-> JSON translations with ctx -->
     <!-- Source: https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-databind -->
     <dependency>
