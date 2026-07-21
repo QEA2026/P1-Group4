@@ -21,9 +21,12 @@ def submit_new_expense(user_id, amount, description, category):
             logger.warning(f"Empty description submitted by user {user_id}: {description}")
             return False
 
-        submit_new_expense_dao(user_id, amount, description, category)
-        logger.info(f"Successfully submitted expense for userid: {user_id}")
-        return True
+        result = submit_new_expense_dao(user_id, amount, description, category)
+        if result:
+            logger.info(f"Successfully submitted expense for userid: {user_id}")
+        else:
+            logger.warning(f"Failed to submit expense for userid: {user_id} - database error")
+        return result
 
     except ValueError as e:
         logger.error(f"Error couldn't convert {amount} to float: {e}")

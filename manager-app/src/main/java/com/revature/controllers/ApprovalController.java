@@ -38,18 +38,31 @@ public class ApprovalController {
             // then deserialize the JSOM request body into a Approval object
             Approval reviewRequest = ctx.bodyAsClass(Approval.class);
 
+            // A review can only ever result in approved or denied. Anything else would
+            // be written straight to the approvals table and make the expense invisible
+            // to both the pending list and the history report.
+            String status = reviewRequest.getStatus();
+            if (status == null || !(status.equalsIgnoreCase("approved") || status.equalsIgnoreCase("denied"))) {
+                logger.warn("Rejected review of expense {} with invalid status: {}", expenseId, status);
+                ctx.status(HttpStatus.BAD_REQUEST);
+                ctx.result("Status must be either 'approved' or 'denied'.");
+                return;
+            }
+            // store it lowercase so it always matches the queries that filter on status
+            status = status.toLowerCase();
+
             //call the DAO to update the approvals table and return true if successful
             boolean success = approvalDAO.updateApproval(
                     expenseId,
-                    reviewRequest.getStatus(),
+                    status,
                     reviewRequest.getReviewer(),
                     reviewRequest.getComment()
             );
 
             if (success) {
-                logger.info("Expense {} successfully updated to status: {}", expenseId, reviewRequest.getStatus());
+                logger.info("Expense {} successfully updated to status: {}", expenseId, status);
                 ctx.status(HttpStatus.OK);
-                ctx.result("Expense " + reviewRequest.getStatus() + " successfully.");
+                ctx.result("Expense " + status + " successfully.");
             } else {
                 logger.warn("Failed to update expense {}", expenseId);
                 ctx.status(HttpStatus.BAD_REQUEST);
