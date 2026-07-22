@@ -1,18 +1,16 @@
 package com.revature.controllers;
-import com.revature.DAOs.ExpenseDAO;
+import com.revature.services.ExpenseService;
 import io.javalin.http.Handler;
 import io.javalin.http.HttpStatus;
-import com.revature.DAOs.UserDAO;
-import com.revature.models.User;
 import com.revature.exceptions.ResourceNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 /*
  * Handles all HTTP requests related to viewing expenses for the
  * Manager App. This is the "web" layer that sits between Postman
- * (or any future frontend) and the database.It doesn't contain
- * any database logic itself, it just receives requests, calls the
- * DAO to get data, and sends a JSON response back.
+ * (or any future frontend) and the service layer. It doesn't contain
+ * any business logic itself, it just parses requests, calls the
+ * service, and sends a JSON response back.
  *
  * Covers these manager user stories:
  *  - View all pending expenses awaiting review
@@ -21,13 +19,12 @@ import org.slf4j.LoggerFactory;
 
 public class ExpenseController {
     private static final Logger logger = LoggerFactory.getLogger(ExpenseController.class);
-    ExpenseDAO expenseDAO = new ExpenseDAO();
-    UserDAO userDAO = new UserDAO();
+    ExpenseService expenseService = new ExpenseService();
 
     // Returns every expense currently awaiting manager review.
     public Handler getPendingExpensesHandler = (ctx) -> {
         try {
-            var pendingExpenses = expenseDAO.getPendingExpenses();
+            var pendingExpenses = expenseService.getPendingExpenses();
             ctx.json(pendingExpenses);
             ctx.status(HttpStatus.OK);
         } catch (Exception e) {
@@ -43,13 +40,8 @@ public class ExpenseController {
         try {
             userId = Integer.parseInt(ctx.pathParam("userId"));
 
-            // Check if the user exists first
-            User user = userDAO.getUserById(userId);
-            if(user == null) {
-                throw new ResourceNotFoundException("No user found with id:" + userId);
-            }
-            // if the user exists, get their expenses (could be an empty list which is valid)
-            var expenses = expenseDAO.getExpensesByEmployee(userId);
+            // service checks the user exists and throws ResourceNotFoundException if not
+            var expenses = expenseService.getExpensesByEmployee(userId);
             ctx.json(expenses);
             ctx.status(HttpStatus.OK);
 
@@ -69,7 +61,7 @@ public class ExpenseController {
         String category = "";
         try {
             category = ctx.pathParam("category");
-            ctx.json(expenseDAO.getExpensesByCategory(category));
+            ctx.json(expenseService.getExpensesByCategory(category));
             ctx.status(HttpStatus.OK);
         } catch (Exception e) {
             logger.error("Unexpected error occurred during retrieval of expense by category {} : {}", category, e.getMessage());
@@ -82,7 +74,7 @@ public class ExpenseController {
         String date = "";
         try {
             date = ctx.pathParam("date");
-            ctx.json(expenseDAO.getExpenseByDate(date));
+            ctx.json(expenseService.getExpenseByDate(date));
             ctx.status(HttpStatus.OK);
         } catch (Exception e) {
             logger.error("Unexpected error occurred during retrieval of expense by date {} : {}", date, e.getMessage());
@@ -97,11 +89,8 @@ public class ExpenseController {
         try {
             id = Integer.parseInt(ctx.pathParam("expenseId"));
 
-            var expense = expenseDAO.getExpenseById(id);
-            if (expense == null) {
-                throw new ResourceNotFoundException("No expense found with id:" + id);
-            }
-
+            // service throws ResourceNotFoundException if the expense doesn't exist
+            var expense = expenseService.getExpenseById(id);
             ctx.json(expense);
             ctx.status(HttpStatus.OK);
         } catch (ResourceNotFoundException e) {
