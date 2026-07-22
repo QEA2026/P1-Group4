@@ -222,3 +222,8 @@ __marimo__/
 
 # IntelliJ build output (Java .class files / copied resources)
 out/
+.idea/
+.vscode/
+# Scala tooling caches (Metals / Bloop)
+.metals/
+.bloop/
