@@ -139,4 +139,38 @@ public class ExpenseDAO implements ExpenseDAOInterface{
             logger.error("Database error retrieving expenses for date {} : {}", date, e.getMessage());
         }
         return null;
- 
+    }
+
+    // Should return only one specific expense by its unique primary key
+    @Override
+    public Expense getExpenseById(int expenseId){
+        String sql = "Select * from expenses where id = ?;";
+        try(Connection conn = ConnectionUtil.getConnection();
+            PreparedStatement ps = conn.prepareStatement(sql)){
+
+            ps.setInt(1,expenseId);
+
+
+            try(ResultSet rs = ps.executeQuery()){
+                if(rs.next()){
+                    Expense e = new Expense(
+                            rs.getInt("id"),
+                            rs.getInt("user_id"),
+                            rs.getDouble("amount"),
+                            rs.getString("description"),
+                            rs.getString("date"),
+                            rs.getString("category")
+                    );
+                    logger.info("Successfully retrieved expense with id: {}", expenseId);
+                    return e;
+                }
+
+            }
+
+        } catch (SQLException a){
+            logger.error("Database error retrieving expense by id {} : {}", expenseId, a.getMessage());
+        }
+        logger.warn("No expense found with id: {}", expenseId);
+        throw new ResourceNotFoundException("Expense not found with id: " + expenseId);
+    }
+}

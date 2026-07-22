@@ -87,4 +87,8 @@ public class Approval {
                 ", expenseId=" + expenseId +
                 ", status='" + status + '\'' +
                 ", reviewer=" + reviewer +
-                ", comment
+                ", comment='" + comment + '\'' +
+                ", reviewDate='" + reviewDate + '\'' +
+                '}';
+    }
+}

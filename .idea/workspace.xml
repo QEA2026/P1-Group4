@@ -4,14 +4,20 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="0dbd5622-5eb6-42a3-9d3f-14f631a944a5" name="Changes" comment="" />
+    <list default="true" id="0dbd5622-5eb6-42a3-9d3f-14f631a944a5" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/employee-app/service/user_service.py" beforeDir="false" afterPath="$PROJECT_DIR$/employee-app/service/user_service.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/manager-app/src/main/java/com/revature/DAOs/ApprovalDAO.java" beforeDir="false" afterPath="$PROJECT_DIR$/manager-app/src/main/java/com/revature/DAOs/ApprovalDAO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/manager-app/src/main/java/com/revature/DAOs/ExpenseDAO.java" beforeDir="false" afterPath="$PROJECT_DIR$/manager-app/src/main/java/com/revature/DAOs/ExpenseDAO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/manager-app/src/main/java/com/revature/DAOs/ExpenseDAOInterface.java" beforeDir="false" afterPath="$PROJECT_DIR$/manager-app/src/main/java/com/revature/DAOs/ExpenseDAOInterface.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/manager-app/src/main/java/com/revature/DAOs/UserDAO.java" beforeDir="false" afterPath="$PROJECT_DIR$/manager-app/src/main/java/com/revature/DAOs/UserDAO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/manager-app/src/main/java/com/revature/DAOs/UserDAOInterface.java" beforeDir="false" afterPath="$PROJECT_DIR$/manager-app/src/main/java/com/revature/DAOs/UserDAOInterface.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/manager-app/src/main/java/com/revature/controllers/ExpenseController.java" beforeDir="false" afterPath="$PROJECT_DIR$/manager-app/src/main/java/com/revature/controllers/ExpenseController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/manager-app/src/main/java/com/revature/models/Approval.java" beforeDir="false" afterPath="$PROJECT_DIR$/manager-app/src/main/java/com/revature/models/Approval.java" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
-  </component>
-  <component name="EmbeddingIndexingInfo">
-    <option name="cachedIndexableFilesCount" value="83" />
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
@@ -22,35 +28,35 @@
     &quot;assignee&quot;: &quot;vwartemb&quot;
   }
 }</component>
-  <component name="GithubPullRequestsUISettings">{
-  &quot;selectedUrlAndAccountId&quot;: {
-    &quot;url&quot;: &quot;https://github.com/JamWhit0802/P1-Group4.git&quot;,
-    &quot;accountId&quot;: &quot;e74aeec0-48d8-43d8-a0bf-d2113b9104fd&quot;
+  <component name="GithubPullRequestsUISettings"><![CDATA[{
+  "selectedUrlAndAccountId": {
+    "url": "https://github.com/QEA2026/P1-Group4.git",
+    "accountId": "e74aeec0-48d8-43d8-a0bf-d2113b9104fd"
   }
-}</component>
+}]]></component>
   <component name="McpProjectServerCommands">
     <commands />
     <urls />
   </component>
   <component name="NextEditCompletionFeaturesState">
     <decayedCancelled>
-      <entry key="MS100" value="1.8401895695085924" />
-      <entry key="MS500" value="3.5332647140771836" />
-      <entry key="S2" value="7.244534793292005" />
-      <entry key="S5" value="11.809730922612397" />
-      <entry key="S10" value="15.235306998819752" />
-      <entry key="S30" value="18.719233925497782" />
-      <entry key="S60" value="19.806415108412317" />
-      <entry key="M2" value="20.389183291166137" />
-      <entry key="M5" value="20.752210013451965" />
-      <entry key="M10" value="20.87551945573754" />
-      <entry key="M15" value="20.916882223056923" />
-      <entry key="M30" value="20.958375580816952" />
-      <entry key="H1" value="20.979171378223974" />
-      <entry key="H2" value="20.989581582371375" />
-      <entry key="H4" value="20.994789764038334" />
-      <entry key="D1" value="20.99913148464112" />
-      <entry key="W1" value="20.999875922882143" />
+      <entry key="MS100" value="1.8241558914234401" />
+      <entry key="MS500" value="3.314985637746934" />
+      <entry key="S2" value="6.187299264537626" />
+      <entry key="S5" value="9.432458046209968" />
+      <entry key="S10" value="16.755848459684323" />
+      <entry key="S30" value="40.47793029346822" />
+      <entry key="S60" value="55.036704150381446" />
+      <entry key="M2" value="65.61881739015215" />
+      <entry key="M5" value="75.5998423686192" />
+      <entry key="M10" value="91.47050545432944" />
+      <entry key="M15" value="111.41077980086168" />
+      <entry key="M30" value="161.5387466211323" />
+      <entry key="H1" value="213.21791705909558" />
+      <entry key="H2" value="251.47393593573779" />
+      <entry key="H4" value="274.95663165963396" />
+      <entry key="D1" value="297.22094460105177" />
+      <entry key="W1" value="301.31027237045555" />
     </decayedCancelled>
     <decayedSelected>
       <entry key="MS100" value="0.0" />
@@ -72,23 +78,23 @@
       <entry key="W1" value="0.0" />
     </decayedSelected>
     <decayedShown>
-      <entry key="MS100" value="1.7289930099698243" />
-      <entry key="MS500" value="3.4779320472613455" />
-      <entry key="S2" value="7.215095408169294" />
-      <entry key="S5" value="11.787698521682733" />
-      <entry key="S10" value="15.2197791218169" />
-      <entry key="S30" value="18.712420739733577" />
-      <entry key="S60" value="19.802745191844416" />
-      <entry key="M2" value="20.387277122882377" />
-      <entry key="M5" value="20.751429718888332" />
-      <entry key="M10" value="20.875126273714983" />
-      <entry key="M15" value="20.91661942253761" />
-      <entry key="M30" value="20.9582438397682" />
-      <entry key="H1" value="20.97910542227593" />
-      <entry key="H2" value="20.989548583013068" />
-      <entry key="H4" value="20.994773259009555" />
-      <entry key="D1" value="20.99912873305969" />
-      <entry key="W1" value="20.999875529780866" />
+      <entry key="MS100" value="1.7669739018660353" />
+      <entry key="MS500" value="3.2916089641689714" />
+      <entry key="S2" value="6.172945519976547" />
+      <entry key="S5" value="9.422827357662795" />
+      <entry key="S10" value="16.74632466196632" />
+      <entry key="S30" value="40.46591820898815" />
+      <entry key="S60" value="55.02003191549832" />
+      <entry key="M2" value="65.60173913106202" />
+      <entry key="M5" value="75.58814051207906" />
+      <entry key="M10" value="91.46292012923195" />
+      <entry key="M15" value="111.40509203300219" />
+      <entry key="M30" value="161.53542580957415" />
+      <entry key="H1" value="213.21607591620136" />
+      <entry key="H2" value="251.47295653592718" />
+      <entry key="H4" value="274.9561248854164" />
+      <entry key="D1" value="297.22085752344253" />
+      <entry key="W1" value="301.3102598632272" />
     </decayedShown>
   </component>
   <component name="ProjectColorInfo">{
@@ -100,28 +106,28 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "ModuleVcsDetector.initialDetectionPerformed": "true",
-    "RunOnceActivity.MCP Project settings loaded": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
-    "RunOnceActivity.git.unshallow": "true",
-    "RunOnceActivity.typescript.service.memoryLimit.init": "true",
-    "codeWithMe.voiceChat.enabledByDefault": "false",
-    "com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1": "true",
-    "git-widget-placeholder": "main",
-    "junie.onboarding.icon.badge.shown": "true",
-    "kotlin-language-version-configured": "true",
-    "last_opened_file_path": "/Users/vanessawartemberg/Documents/P1-Group4",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "to.speed.mode.migration.done": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.MCP Project settings loaded&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.typescript.service.memoryLimit.init&quot;: &quot;true&quot;,
+    &quot;codeWithMe.voiceChat.enabledByDefault&quot;: &quot;false&quot;,
+    &quot;com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;junie.onboarding.icon.badge.shown&quot;: &quot;true&quot;,
+    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;/Users/vanessawartemberg/Documents/P1-Group4&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;to.speed.mode.migration.done&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$" />
