@@ -1,8 +1,9 @@
 package com.revature;
 
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.BeforeEach;  
+import org.junit.jupiter.api.AfterEach;  
+import static org.junit.jupiter.api.Assertions.*; 
 
 /**
  * Unit test for simple App.
@@ -15,6 +16,7 @@ public class AppTest
      *
      * @param testName name of the test case
      */
+    @Test
     public AppTest( String testName )
     {
         super( testName );
@@ -23,6 +25,7 @@ public class AppTest
     /**
      * @return the suite of tests being tested
      */
+    @Test
     public static Test suite()
     {
         return new TestSuite( AppTest.class );
@@ -31,6 +34,7 @@ public class AppTest
     /**
      * Rigourous Test :-)
      */
+    @Test
     public void testApp()
     {
         assertTrue( true );
