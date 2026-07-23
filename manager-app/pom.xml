@@ -31,6 +31,15 @@
         <scope>test</scope>
     </dependency>
 
+    <!-- Provides MockitoExtension (@ExtendWith) for JUnit 5 tests -->
+    <!-- Source: https://mvnrepository.com/artifact/org.mockito/mockito-junit-jupiter -->
+    <dependency>
+        <groupId>org.mockito</groupId>
+        <artifactId>mockito-junit-jupiter</artifactId>
+        <version>${mockito.version}</version>
+        <scope>test</scope>
+    </dependency>
+
     <!-- For SQLlite: JDBC Driver -->
     <dependency>
       <groupId>org.xerial</groupId>

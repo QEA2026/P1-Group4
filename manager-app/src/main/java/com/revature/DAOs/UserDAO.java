@@ -21,14 +21,13 @@ public class UserDAO implements UserDAOInterface{
 
             try(ResultSet rs = ps.executeQuery()){
                 if(rs.next()){
-                    User u = new User(
+                    logger.info("Retrieved user with username: {}", username);
+                    return new User(
                             rs.getInt("id"),
                             rs.getString("username"),
                             rs.getString("password"),
                             rs.getString("role")
                     );
-                    logger.info("Successfully retrieved user with username: {}", username);
-                    return u;
                 }
             }
 
@@ -36,10 +35,10 @@ public class UserDAO implements UserDAOInterface{
             logger.error("Database error retrieving user by username {} : {}", username, e.getMessage());
         }
         logger.warn("No user found with username: {}", username);
-        throw new ResourceNotFoundException("User not found with username: " + username);
+        return null;
     }
 
-
+    @Override
     public User getUserById(int userId){
         String sql = "select * from users where id = ?;";
 
@@ -50,14 +49,13 @@ public class UserDAO implements UserDAOInterface{
 
             try(ResultSet rs = ps.executeQuery()){
                 if(rs.next()){
-                    User u = new User(
+                    logger.info("Retrieved user with id: {}", userId);
+                    return new User(
                             rs.getInt("id"),
                             rs.getString("username"),
                             rs.getString("password"),
                             rs.getString("role")
                     );
-                    logger.info("Successfully retrieved user with id: {}", userId);
-                    return u;
                 }
             }
 
@@ -65,6 +63,6 @@ public class UserDAO implements UserDAOInterface{
             logger.error("Database error retrieving user by id {} : {}", userId, e.getMessage());
         }
         logger.warn("No user found with id: {}", userId);
-        throw new ResourceNotFoundException("User not found with id: " + userId);
+        return null;
     }
 }
