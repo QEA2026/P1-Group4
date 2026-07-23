@@ -18,7 +18,7 @@ public class ConnectionUtil {
 
         
         String dbPath = Paths.get("").toAbsolutePath()
-                .resolve("../database/expense_manager.db")
+                .resolve("../database/my_expense_manager.db")
                 .normalize()
                 .toString();
 
