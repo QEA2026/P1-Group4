@@ -11,11 +11,26 @@
   <properties>
     <maven.compiler.release>21</maven.compiler.release>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <junit.version>6.1.1</junit.version>
+    <junit.version>5.10.3</junit.version>
     <mockito.version>5.23.0</mockito.version>
+    <allure.version>2.35.3</allure.version>
+    <aspectj.version>1.9.25</aspectj.version>
   </properties>
 
+  <dependencyManagement>
+    <dependencies>
+        <dependency>
+            <groupId>io.qameta.allure</groupId>
+            <artifactId>allure-bom</artifactId>
+            <version>${allure.version}</version>
+            <type>pom</type>
+            <scope>import</scope>
+        </dependency>
+    </dependencies>
+</dependencyManagement>
+
   <dependencies>
+  
     <dependency>
       <groupId>org.junit.jupiter</groupId>
       <artifactId>junit-jupiter</artifactId>
@@ -82,6 +97,47 @@
       <version>0.10.2</version>
     </dependency>
 
+    <dependency>
+    <groupId>io.qameta.allure</groupId>
+    <artifactId>allure-jupiter</artifactId>
+    <scope>test</scope>
+</dependency>
+    
+
 
   </dependencies>
+
+  <build>
+  <plugins>
+
+    <plugin>
+      <groupId>org.apache.maven.plugins</groupId>
+      <artifactId>maven-compiler-plugin</artifactId>
+      <configuration>
+        <release>21</release>
+      </configuration>
+    </plugin>
+
+    <plugin>
+      <groupId>org.apache.maven.plugins</groupId>
+      <artifactId>maven-surefire-plugin</artifactId>
+      <version>3.2.5</version>
+
+      <configuration>
+        <argLine>
+          -javaagent:"${settings.localRepository}/org/aspectj/aspectjweaver/${aspectj.version}/aspectjweaver-${aspectj.version}.jar"
+        </argLine>
+      </configuration>
+
+      <dependencies>
+        <dependency>
+          <groupId>org.aspectj</groupId>
+          <artifactId>aspectjweaver</artifactId>
+          <version>${aspectj.version}</version>
+        </dependency>
+      </dependencies>
+    </plugin>
+
+  </plugins>
+</build>
 </project>
