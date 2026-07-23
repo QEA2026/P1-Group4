@@ -110,7 +110,7 @@ public class ExpenseTest {
                 "category string");
 
         String expected =
-                "Expense{id=100, userId=100, amount=999.99, description='description string', date='2026-07-22', category=category string'}";
+                "Expense{id=100, userId=100, amount=999.99, description='description string', date='2026-07-22', category='category string'}";
 
         assertEquals(expected, expense.toString());
     }

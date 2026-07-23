@@ -86,7 +86,7 @@ public class Expense {
                 ", amount=" + amount +
                 ", description='" + description + '\'' +
                 ", date='" + date + '\'' +
-                ", category=" + category  + '\'' +
+                ", category='" + category  + '\'' +
                 '}';
     }
 }
