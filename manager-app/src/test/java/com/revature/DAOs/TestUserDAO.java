@@ -87,9 +87,10 @@ class TestUserDAO {
     }
 
     @Test
-    @DisplayName("getUserByUsername - checking for null username value")
-    void getUserByUsername_potentialNullValueInDatabase_throwsSQLException() {
-        assertThrows(ResourceNotFoundException.class, () -> userDAO.getUserByUsername(null));
+    @DisplayName("getUserByUsername - returns null for null username")
+    void getUserByUsername_nullUsername_returnsNull() {
+        User result = userDAO.getUserByUsername(null);
+        Assertions.assertNull(result);
     }
 
 //    These tests are tests that directly affect the database(integration tests), they are commented out for now
