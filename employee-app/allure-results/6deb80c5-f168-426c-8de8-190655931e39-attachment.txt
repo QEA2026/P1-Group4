@@ -1,0 +1,1 @@
+[33mWARNING [0m service.expense_service:expense_service.py:21 Empty description submitted by user 1:
