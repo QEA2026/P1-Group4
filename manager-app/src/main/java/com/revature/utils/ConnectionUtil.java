@@ -7,6 +7,10 @@ import java.nio.file.Paths;
 
 public class ConnectionUtil {
 
+    // Lets tests point at a disposable database instead of the real one,
+    // without touching any DAO code - falls back to the real db when unset.
+    private static final String DB_PATH_PROPERTY = "expense.db.path";
+
     public static Connection getConnection() throws SQLException {
 
         try {
@@ -16,11 +20,13 @@ public class ConnectionUtil {
             System.out.println("problem occurred locating driver");
         }
 
-        
-        String dbPath = Paths.get("").toAbsolutePath()
-                .resolve("../database/expense_manager.db")
-                .normalize()
-                .toString();
+        String dbPath = System.getProperty(DB_PATH_PROPERTY);
+        if (dbPath == null) {
+            dbPath = Paths.get("").toAbsolutePath()
+                    .resolve("../database/expense_manager.db")
+                    .normalize()
+                    .toString();
+        }
 
         String url = "jdbc:sqlite:" + dbPath;
 
