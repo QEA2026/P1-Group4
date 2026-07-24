@@ -30,7 +30,7 @@
 </dependencyManagement>
 
   <dependencies>
-  
+
     <dependency>
       <groupId>org.junit.jupiter</groupId>
       <artifactId>junit-jupiter</artifactId>
@@ -45,12 +45,16 @@
         <version>${mockito.version}</version>
         <scope>test</scope>
     </dependency>
+
+    <!-- Provides MockitoExtension (@ExtendWith) for JUnit 5 tests -->
+    <!-- Source: https://mvnrepository.com/artifact/org.mockito/mockito-junit-jupiter -->
     <dependency>
-      <groupId>org.mockito</groupId>
-      <artifactId>mockito-junit-jupiter</artifactId>
-      <version>${mockito.version}</version>
-      <scope>test</scope>
+        <groupId>org.mockito</groupId>
+        <artifactId>mockito-junit-jupiter</artifactId>
+        <version>${mockito.version}</version>
+        <scope>test</scope>
     </dependency>
+
     <!-- For SQLlite: JDBC Driver -->
     <dependency>
       <groupId>org.xerial</groupId>
@@ -102,14 +106,13 @@
     <artifactId>allure-jupiter</artifactId>
     <scope>test</scope>
 </dependency>
-    
+
 
 
   </dependencies>
 
   <build>
   <plugins>
-
     <plugin>
       <groupId>org.apache.maven.plugins</groupId>
       <artifactId>maven-compiler-plugin</artifactId>
