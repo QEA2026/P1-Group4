@@ -230,3 +230,5 @@ out/
 # Scala tooling caches (Metals / Bloop)
 .metals/
 .bloop/
+.allure-results/
+.allure-report/
