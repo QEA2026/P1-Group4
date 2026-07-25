@@ -50,10 +50,8 @@ class TestUserDAO {
                 when(mockRs.getString("password")).thenReturn("password123");
                 when(mockRs.getString("role")).thenReturn("manager");
 
-                // Call method under test
                 User user = userDAO.getUserByUsername("testuser");
 
-                // Verify results
                 assertEquals("testuser", user.getUsername());
                 assertEquals("manager", user.getRole());
 
@@ -94,6 +92,28 @@ class TestUserDAO {
             User result = userDAO.getUserByUsername(null);
             Assertions.assertNull(result);
         }
+
+        @Test
+        @DisplayName("getUserByUsername - Connection fails exception thrown")
+        void getUserByUsername_connectionFails_throwsException() {
+            try(MockedStatic<ConnectionUtil> mocked = mockStatic(ConnectionUtil.class)) {
+                mocked.when(ConnectionUtil::getConnection).thenThrow(new SQLException ("Forced Exception"));
+                User user = userDAO.getUserByUsername("someUsername");
+
+                assertNull(user);
+            }
+
+        }
+        @Test
+        @DisplayName("getUserById - Connection fails exception thrown")
+        void getUserById_connectionFails_throwsException() {
+            try(MockedStatic<ConnectionUtil> mocked = mockStatic(ConnectionUtil.class)) {
+                mocked.when(ConnectionUtil::getConnection).thenThrow(new SQLException ("Forced Exception"));
+                User user = userDAO.getUserById(1);
+
+                assertNull(user);
+            }
+        }
     }
 
 
@@ -106,7 +126,6 @@ class TestUserDAO {
             Path tempDbFile = Files.createTempFile("test-expense", ".db");
             tempDbFile.toFile().deleteOnExit();
 
-            // Set system property so ConnectionUtil uses this DB path
             System.setProperty("expense.db.path", tempDbFile.toString());
 
             // Create schema and insert test data
@@ -135,22 +154,6 @@ class TestUserDAO {
             User user = userDAO.getUserByUsername("testuser");
             assertEquals("testuser", user.getUsername(), "Username was not found or did not match");
         }
-
-        @Test
-        @DisplayName("getUserByUsername - Connection fails exception thrown")
-        void getUserByUsername_connectionFails_throwsException() {
-//            try(Connection conn = ConnectionUtil.getConnection();
-//                PreparedStatement ps = conn.prepareStatement("INSERT INTO users (id,username,password,role) VALUES (?,?,?,?)")) {
-//                ps.executeUpdate();
-//            } catch (SQLException e) {
-//                System.out.println("Trouble finding username");
-//            }
-            User user = userDAO.getUserByUsername("nonexistentUser");
-            assertThrows(SQLException.class,
-                    () -> userDAO.getUserByUsername("nonexistentUser"));
-        }
-
-
 
         @Test
         @DisplayName("GetUserByUsername - Correct Local User Input")
