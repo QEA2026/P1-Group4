@@ -6,6 +6,8 @@ import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.*;
 import org.mockito.junit.jupiter.MockitoExtension;
+import io.qameta.allure.Description;
+import io.qameta.allure.Step;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -36,6 +38,7 @@ class TestUserDAO {
         }
 
         @Test
+        @Description("GetUserByUsername - Using Only Mocks")
         @DisplayName("GetUserByUsername - Using Only Mocks")
         void getUserByUsername_mockingDependencies_ReturnsUserInstance() {
             try (MockedStatic<ConnectionUtil> mockedStatic = mockStatic(ConnectionUtil.class)) {
@@ -61,6 +64,7 @@ class TestUserDAO {
         }
 
         @Test
+        @Description("GetUserByID - Mocking Entire Process")
         @DisplayName("GetUserByID - Mocking Entire Process")
         void getUserByID_mockedInfoInserted_returnUserInstance() {
             Connection mockConn = mock(Connection.class);
@@ -87,6 +91,7 @@ class TestUserDAO {
         }
 
         @Test
+        @Description("getUserByUsername - returns null for null username")
         @DisplayName("getUserByUsername - returns null for null username")
         void getUserByUsername_nullUsername_returnsNull() {
             User result = userDAO.getUserByUsername(null);
@@ -94,6 +99,7 @@ class TestUserDAO {
         }
 
         @Test
+        @Description("getUserByUsername - Connection fails exception thrown")
         @DisplayName("getUserByUsername - Connection fails exception thrown")
         void getUserByUsername_connectionFails_throwsException() {
             try(MockedStatic<ConnectionUtil> mocked = mockStatic(ConnectionUtil.class)) {
@@ -105,6 +111,7 @@ class TestUserDAO {
 
         }
         @Test
+        @Description("getUserById - Connection fails exception thrown")
         @DisplayName("getUserById - Connection fails exception thrown")
         void getUserById_connectionFails_throwsException() {
             try(MockedStatic<ConnectionUtil> mocked = mockStatic(ConnectionUtil.class)) {
@@ -138,6 +145,7 @@ class TestUserDAO {
         }
 
         @Test
+        @Description("GetUserByUsername - Correct Local User Input")
         @DisplayName("GetUserByUsername - Correct Local User Input")
         void getUserByUsername_localUserInserted_ReturnsUserInstance() {
             try (Connection conn = ConnectionUtil.getConnection();
@@ -156,6 +164,7 @@ class TestUserDAO {
         }
 
         @Test
+        @Description("GetUserByUsername - Correct Local User Input")
         @DisplayName("GetUserByUsername - Correct Local User Input")
         void getUserById_localUserInserted_ReturnsUserInstance() {
             try (Connection conn = ConnectionUtil.getConnection();
