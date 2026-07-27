@@ -7,7 +7,7 @@ API Layer: Flask routes for the employee side
 
 Run with: python app.py  (serves on http://localhost:5001)
 """
-from flask import Flask, request, jsonify, make_response
+from flask import Flask, request, jsonify, make_response, redirect
 
 from api.auth import require_employee_auth, get_current_user
 from service.user_service import login, generate_jwt_token, get_user_by_token
@@ -20,6 +20,22 @@ from service.expense_service import (
 )
 
 app = Flask(__name__)
+
+
+@app.route("/")
+def index_page():
+    return redirect("/login")
+
+
+@app.route("/login")
+def login_page():
+    return app.send_static_file("login.html")
+
+
+@app.route("/app")
+def employee_page():
+    return app.send_static_file("employee.html")
+
 
 # turns the (id, amount, description, date, status, category) tuples into dicts for JSON
 def expense_to_dict(row):
