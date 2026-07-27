@@ -1,5 +1,6 @@
 package com.revature.DAOs;
 
+import com.revature.exceptions.ResourceNotFoundException;
 import com.revature.models.Expense;
 import com.revature.utils.ConnectionUtil;
 
@@ -28,18 +29,20 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 @DisplayName("ExpenseDAO Unit Tests")
 class ExpenseDAOTest {
-
+    //Setup
     @Mock private Connection conn;
     @Mock private PreparedStatement ps;
     @Mock private ResultSet rs;
 
     private ExpenseDAO expenseDAO;
 
+    //real instance, reset fresh before every test
     @BeforeEach
     void setUp() {
         expenseDAO = new ExpenseDAO();
     }
 
+    //use MockedStatic to make a static method (ConnectionUtil.getConnection() is static)
     private MockedStatic<ConnectionUtil> mockConnectionUtil() {
         MockedStatic<ConnectionUtil> mocked = mockStatic(ConnectionUtil.class);
         mocked.when(ConnectionUtil::getConnection).thenReturn(conn);
@@ -86,6 +89,16 @@ class ExpenseDAOTest {
                     () -> assertEquals(exp.getDate(), act.getDate()),
                     () -> assertEquals(exp.getCategory(), act.getCategory()));
         }
+    }
+
+    private void assertExpenseEquals(Expense expected, Expense actual) {
+        assertAll(
+                () -> assertEquals(expected.getId(), actual.getId()),
+                () -> assertEquals(expected.getUserId(), actual.getUserId()),
+                () -> assertEquals(expected.getAmount(), actual.getAmount(), 0.001),
+                () -> assertEquals(expected.getDescription(), actual.getDescription()),
+                () -> assertEquals(expected.getDate(), actual.getDate()),
+                () -> assertEquals(expected.getCategory(), actual.getCategory()));
     }
 
     // ---- getPendingExpenses ----
@@ -233,6 +246,111 @@ class ExpenseDAOTest {
             ArrayList<Expense> result = expenseDAO.getExpensesByCategory("travel");
 
             assertNull(result);
+        }
+    }
+
+    // ---- getExpenseByDate ----
+
+    @DisplayName("getExpenseByDate should bind date and return matching expenses")
+    @Test
+    void getExpenseByDate_whenRowsExist_returnsMatchingListAndBindsDate() throws SQLException {
+        String date = "2026-07-20";
+        List<Expense> expected = List.of(
+                new Expense(1, 10, 25.50, "taxi", date, "travel"),
+                new Expense(4, 12, 40.00, "lunch", date, "food"));
+
+        try (MockedStatic<ConnectionUtil> ignored = mockConnectionUtil()) {
+            when(conn.prepareStatement(anyString())).thenReturn(ps);
+            when(ps.executeQuery()).thenReturn(rs);
+            stubResultSetForRows(expected);
+
+            ArrayList<Expense> result = expenseDAO.getExpenseByDate(date);
+
+            assertNotNull(result);
+            assertExpenseListEquals(expected, result);
+            verify(ps).setString(1, date);
+        }
+    }
+
+    @DisplayName("getExpenseByDate should return empty list when no rows match the date")
+    @Test
+    void getExpenseByDate_whenNoRowsMatch_returnsEmptyList() throws SQLException {
+        try (MockedStatic<ConnectionUtil> ignored = mockConnectionUtil()) {
+            when(conn.prepareStatement(anyString())).thenReturn(ps);
+            when(ps.executeQuery()).thenReturn(rs);
+            stubResultSetForRows(List.of());
+
+            ArrayList<Expense> result = expenseDAO.getExpenseByDate("2026-01-01");
+
+            assertNotNull(result);
+            assertTrue(result.isEmpty());
+        }
+    }
+
+    @DisplayName("getExpenseByDate should return null when a SQLException is thrown")
+    @Test
+    void getExpenseByDate_whenSqlExceptionThrown_returnsNull() {
+        try (MockedStatic<ConnectionUtil> ignored = mockConnectionUtil()) {
+            ignored.when(ConnectionUtil::getConnection).thenThrow(new SQLException("connection failed"));
+
+            ArrayList<Expense> result = expenseDAO.getExpenseByDate("2026-07-20");
+
+            assertNull(result);
+        }
+    }
+
+    // ---- getExpenseById ----
+
+    @DisplayName("getExpenseById should bind id and return the matching expense")
+    @Test
+    void getExpenseById_whenFound_returnsExpense() throws SQLException {
+        Expense expected = new Expense(1, 10, 25.50, "taxi", "2026-07-20", "travel");
+
+        try (MockedStatic<ConnectionUtil> ignored = mockConnectionUtil()) {
+            when(conn.prepareStatement(anyString())).thenReturn(ps);
+            when(ps.executeQuery()).thenReturn(rs);
+            stubResultSetForRows(List.of(expected));
+
+            Expense result = expenseDAO.getExpenseById(1);
+
+            assertExpenseEquals(expected, result);
+            verify(ps).setInt(1, 1);
+        }
+    }
+
+    // No row found: rs.next() returns false, no exception is thrown from the try block,
+    // so execution falls through to the DAO's final throw of ResourceNotFoundException.
+    @DisplayName("getExpenseById should throw ResourceNotFoundException when no expense matches the id")
+    @Test
+    void getExpenseById_whenNotFound_throwsResourceNotFoundException() throws SQLException {
+        int missingId = 999;
+
+        try (MockedStatic<ConnectionUtil> ignored = mockConnectionUtil()) {
+            when(conn.prepareStatement(anyString())).thenReturn(ps);
+            when(ps.executeQuery()).thenReturn(rs);
+            stubResultSetForRows(List.of());
+
+            ResourceNotFoundException ex = assertThrows(ResourceNotFoundException.class,
+                    () -> expenseDAO.getExpenseById(missingId));
+
+            assertEquals("Expense not found with id: " + missingId, ex.getMessage());
+        }
+    }
+
+    // A SQLException is caught and logged internally, but getExpenseById has no early
+    // return on that path either - it falls through to the same final throw as "not found".
+    @DisplayName("getExpenseById should throw ResourceNotFoundException when a SQLException is thrown")
+    @Test
+    void getExpenseById_whenSqlExceptionThrown_throwsResourceNotFoundException() {
+        int id = 5;
+
+        try (MockedStatic<ConnectionUtil> ignored = mockConnectionUtil()) {
+            ignored.when(ConnectionUtil::getConnection).thenThrow(new SQLException("connection failed"));
+
+            ResourceNotFoundException ex = assertThrows(ResourceNotFoundException.class,
+                    () -> expenseDAO.getExpenseById(id));
+
+            assertEquals("Expense not found with id: " + id, ex.getMessage());
         }
     }
 }
