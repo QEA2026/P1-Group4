@@ -12,6 +12,17 @@ public class Main {
         ApprovalController approvalController = new ApprovalController();
 
         Javalin app = Javalin.create(config -> {
+            config.bundledPlugins.enableCors(cors -> {
+                cors.addRule(rule -> {
+                    rule.allowHost(
+                            "http://127.0.0.1:5500",
+                            "http://localhost:5500",
+                            "http://127.0.0.1:5501",
+                            "http://localhost:5501"
+                    );
+                });
+            });
+
             // Keep manager-side route setup together so the API entry points stay easy to find.
             config.routes.post("/login", authController.loginHandler);
             config.routes.get("/expenses/pending", expenseController.getPendingExpensesHandler);
