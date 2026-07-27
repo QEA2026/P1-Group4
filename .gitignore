@@ -130,6 +130,8 @@ __pypackages__/
 #My personal database for testing
 my_expense_manager.db
 
+allure-results/
+
 # Celery stuff
 celerybeat-schedule
 celerybeat.pid

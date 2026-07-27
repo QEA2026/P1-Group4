@@ -17,10 +17,11 @@ def submit_new_expense_dao(user_id, amount, description, category):
         # everytime you submit a new expense you also have to need it to get approved
         cur.execute(" INSERT INTO expenses (user_id, amount, description, date, category) values (?,?,?,?,?)",
                     (user_id, amount, description, date, category))
-        cur.execute(" INSERT INTO approvals (expense_id, status) values (?,?)",
-                    (cur.lastrowid, 'pending'))
-
         expense_id = cur.lastrowid
+
+        cur.execute(" INSERT INTO approvals (expense_id, status) values (?,?)",
+                    (expense_id, 'pending'))
+
         conn.commit()
         logger.info(f"Successfully added expense {expense_id} for user_id: {user_id}")
         return True
