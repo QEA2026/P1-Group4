@@ -1,0 +1,1 @@
+[33mWARNING [0m service.user_service:user_service.py:19 User with username ghost does not exist
