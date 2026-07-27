@@ -285,4 +285,7 @@ def temp_database(tmp_path, mocker):
         side_effect=get_test_connection
     )
 
-    return database_path
+    yield database_path
+
+    if database_path.exists():
+        database_path.unlink()

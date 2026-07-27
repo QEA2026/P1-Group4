@@ -135,8 +135,8 @@ def test_get_expenses_returns_empty_list_when_user_has_no_expenses(temp_database
 
     assert result == []
 
-# Test get expense history by user id 
-def test_get_expense_history_returns_approved_and_denied_expenses(temp_database):
+# Test get expense history by user id / test approved expense 
+def test_get_expense_history_returns_approved_expenses(temp_database):
 
     result = get_expense_history_dao(1)
 
@@ -148,6 +148,22 @@ def test_get_expense_history_returns_approved_and_denied_expenses(temp_database)
             "2026-07-23",
             "approved",
             "Travel"
+        )
+    ]
+
+# Test get expense history by user id / test denied expense 
+def test_get_expense_history_returns_denied_expenses(temp_database):
+
+    result = get_expense_history_dao(2)
+
+    assert result == [
+        (
+            3,
+            20.0,
+            "Uber",
+            "2026-07-24",
+            "denied",
+            "transportation"
         )
     ]
 
