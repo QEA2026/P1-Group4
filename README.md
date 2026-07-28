@@ -1,135 +1,227 @@
 
-# Revature Expense Manager
+# Revature Expense Manager — Phase 2
 
-A console-based expense tracking system built across two applications that share a single SQLite database: a **Python Employee App** for submitting and managing expenses, and a **Java Manager App** (exposed as a REST API) for reviewing, approving, and denying those expenses.
+A web-based expense tracking system with two applications sharing one SQLite database:
 
-## Overview
+- **Employee Web App** (Python) — submit and manage personal expense reports
+- **Manager App** (Java REST API) — review, approve, and deny submitted expenses
 
-Employees use a Python console application to submit expense reports, track their status, and view their approval history. Managers use a Java-based REST API (tested via Postman, viewable in DBeaver) to review pending expenses, approve or deny them with comments, and generate reports by employee, category, or date.
+Both applications read from and write to the same `database/expense_manager.db`, despite being written in different languages.
 
-Both applications read from and write to the same `database/expense_manager.db` SQLite file, despite being written in completely different languages and run independently.
-
-## Architecture
-
-Both apps follow a layered architecture:
-
-```
-UI / Controller Layer   →  collects input, returns output
-Service Layer           →  validates input, business rules (Python)
-DAO Layer                →  talks to the database, no business logic
-Model Layer               →  plain data objects (Java only)
-```
-
-The Java side additionally exposes its Controller layer as a Javalin REST API rather than a console menu, since it's tested via Postman and demoed alongside DBeaver.
+---
 
 ## Tech Stack
 
-| Category | Technology |
+| Area | Technology |
 |---|---|
-| Languages | Python 3.x, Java 17 |
-| Database | SQLite |
-| Java Web Framework | Javalin 7 |
-| Java DB Connectivity | JDBC (sqlite-jdbc) |
-| JSON Serialization | Jackson |
-| Password Hashing | bcrypt (Python `bcrypt`, Java `at.favre.lib.bcrypt`) |
-| Build Tools | Maven (Java), pip (Python) |
-| Testing Tool | Postman |
-| Database Viewer | DBeaver |
+| Backend | Python (Employee Web App), Java + Javalin (Manager API) |
+| Database | SQLite (shared) |
+| Auth | bcrypt password hashing, JWT sessions (employee app) |
+| Unit Testing | pytest (Python), JUnit 5 + Mockito (Java) |
+| Coverage | coverage.py / pytest-cov (Python), JaCoCo (Java) |
+| E2E Testing | Behave + Selenium (Python) |
+| API Testing | Postman |
+| Performance | JMeter |
+| Tracking | Jira, Git |
 
-## Database Schema
+---
 
-**`users`** — id, username, password (bcrypt hash), role (`employee` or `manager`)
-**`expenses`** — id, user_id (FK), amount, category, description, date
-**`approvals`** — id, expense_id (FK), status (`pending`/`approved`/`denied`), reviewer, comment, review_date
+## Prerequisites
 
-Every new expense creates a row in `expenses` and a matching `pending` row in `approvals`. Status, reviewer, and comments live separately from the expense itself so that submission data never changes once created.
+- Python 3.13+
+- Java 17+ and Maven
+- Google Chrome (required for Selenium E2E tests)
+- Allure CLI (optional, for test reports): `brew install allure`
 
-## Project Structure
+---
 
-```
-Revature-Expense-Manager/
-├── database/
-│   └── expense_manager.db
-├── employee-app/              (Python)
-│   ├── main.py
-│   ├── dao/
-│   ├── service/
-│   ├── ui/
-│   └── db/
-├── manager-app/                (Java, Javalin REST API)
-│   └── src/main/java/com/revature/
-│       ├── Main.java
-│       ├── controllers/
-│       ├── DAOs/
-│       ├── models/
-│       └── utils/
-└── setup_db.py                 (creates schema + seeds test data)
-```
+## Database Setup
 
-## Setup
+From the repo root, create and seed the shared database:
 
-### Database
-From the repo root:
 ```bash
 python3 setup_db.py
 ```
-Creates `database/expense_manager.db` with all tables and seed data (test employees, a manager, and sample expenses).
 
-### Employee App (Python)
+To reset it completely:
+
+```bash
+rm database/expense_manager.db
+python3 setup_db.py
+```
+
+Seeded users (all with password `password123`):
+
+| Username | Role |
+|---|---|
+| marco | employee |
+| bob | employee |
+| vanessa | manager |
+
+---
+
+## Running the Applications
+
+### Employee Web App (Python)
+
 ```bash
 cd employee-app
 python3 -m venv venv
 source venv/bin/activate
 pip install -r requirements.txt
-python3 main.py
+python app.py
 ```
 
-### Manager App (Java)
+Runs on **http://localhost:5001**. Open `http://localhost:5001/login` in a browser.
+
+### Manager App (Java REST API)
+
 ```bash
 cd manager-app
 mvn clean install
-mvn compile exec:java -Dexec.mainClass=com.revature.Main 
+mvn exec:java -Dexec.mainClass="com.revature.Main"
 ```
-Run `Main.java` from your IDE
 
-Server starts on `http://localhost:8080`.
+Runs on **http://localhost:8080**. This is a REST API — test it with Postman or curl (see the API section below).
+
+---
+
+## Running the Tests
+
+### Python — Unit Tests (pytest)
+
+```bash
+cd employee-app
+source venv/bin/activate
+pytest tests/ -v
+```
+
+With coverage:
+
+```bash
+pytest tests/ --cov=service --cov-report=term-missing
+```
+
+### Python — E2E Tests (Behave + Selenium)
+
+The web app **must be running in a separate terminal first** (`python app.py`), since Selenium drives a real browser against the live site. Then:
+
+```bash
+cd employee-app
+source venv/bin/activate
+behave
+```
+
+Run a single feature:
+
+```bash
+behave features/login.feature
+```
+
+### Java — Unit Tests (JUnit 5 + Mockito)
+
+```bash
+cd manager-app
+mvn test
+```
+
+### Java — Code Coverage (JaCoCo)
+
+```bash
+cd manager-app
+mvn clean test
+open target/site/jacoco/index.html
+```
+
+### Allure Report (optional — Python unit tests)
+
+```bash
+cd employee-app
+source venv/bin/activate
+pytest tests/ --alluredir=allure-results
+allure serve allure-results
+```
+
+---
 
 ## API Endpoints (Manager App)
 
 | Method | Endpoint | Description |
 |---|---|---|
-| POST | `/login` | Manager login (bcrypt-verified, role-checked) |
+| POST | `/login` | Manager login (bcrypt verified, role checked) |
 | GET | `/expenses/pending` | All expenses awaiting review |
 | GET | `/reports/employee/{userId}` | All expenses for one employee |
 | GET | `/reports/category/{category}` | All expenses in one category |
 | GET | `/reports/date/{date}` | All expenses on one date |
 | GET | `/reports/expense/{expenseId}` | A single expense by id |
+| PUT | `/expenses/{id}/review` | Approve or deny an expense |
 
-### Example login request
+### Example — Login
+
 ```bash
 curl -X POST http://localhost:8080/login \
   -H "Content-Type: application/json" \
   -d '{"username": "vanessa", "password": "password123"}'
-
-curl http://localhost:8080/expenses/pending
-curl http://localhost:8080/reports/employee/1
-curl http://localhost:8080/reports/category/travel
-curl http://localhost:8080/reports/date/2026-06-01
-curl http://localhost:8080/reports/expense/1
 ```
 
-## Employee App Features (Python Console)
+### Example — Approve an expense
 
-- Secure login 
-- Submit a new expense (amount, description, category)
-- View all personal expenses with current status
-- Edit a pending expense
-- Delete a pending expense
-- View history of approved/denied expenses
+```bash
+curl -X PUT http://localhost:8080/expenses/1/review \
+  -H "Content-Type: application/json" \
+  -d '{"status": "approved", "reviewer": 3, "comment": "Approved for reimbursement."}'
+```
 
-## Notes
+---
 
-- Passwords are hashed with bcrypt on both sides; Java uses `at.favre.lib.bcrypt` specifically because the older `jbcrypt` library doesn't support the `$2b$` hash format Python's `bcrypt` produces.
-- The Java Manager App is built as a REST API (not a console app) so it can be demoed live via Postman, with database changes verified in real time through DBeaver.
+## Performance Testing (JMeter)
 
+<!-- TODO: fill in the actual .jmx file location and which endpoints were load-tested -->
+JMeter test plans measure response times and throughput under concurrent load against the Manager API (port 8080). Test plans are located in `<add path to .jmx files>`.
 
+---
+
+## End-to-End Testing Notes
+
+- **Python (Behave + Selenium):** implemented — see `employee-app/features/`. Covers login (success + rejection) and expense submission (valid, negative amount, empty description).
+- **Java (Cucumber + Selenium):** <!-- TODO: update if implemented --> the Manager app is currently a REST API tested via Postman; browser-based E2E is not yet implemented on the Java side.
+
+---
+
+## Project Structure
+
+```
+P1-Group4/
+├── database/
+│   └── expense_manager.db
+├── setup_db.py
+├── employee-app/              # Python employee web app
+│   ├── app.py                 # entry point (port 5001)
+│   ├── api/  dao/  service/  ui/  db/
+│   ├── tests/                 # pytest unit tests
+│   ├── features/              # Behave E2E tests
+│   │   ├── login.feature
+│   │   ├── submit_expense.feature
+│   │   ├── environment.py
+│   │   └── steps/
+│   └── requirements.txt
+└── manager-app/               # Java manager REST API
+    └── src/
+        ├── main/java/com/revature/
+        │   ├── Main.java       # entry point (port 8080)
+        │   ├── controllers/  services/  DAOs/  models/  exceptions/  utils/
+        └── test/java/com/revature/   # JUnit + Mockito tests
+```
+
+---
+
+## Testing Approach
+
+The suite validates behavior at multiple layers:
+
+- **Unit tests** isolate business logic in the service layer using mocks, so no real database is touched. Both happy-path and sad-path (invalid input, not-found, edge cases) scenarios are covered.
+- **API tests** (Postman) verify each endpoint returns correct status codes and enforces authentication and authorization.
+- **E2E tests** (Behave + Selenium) drive a real browser through complete user workflows, covering both successful flows and failure scenarios (invalid form input, unauthorized access).
+- **Performance tests** (JMeter) measure the API under concurrent load.
+
+Client-side validation (HTML5 `required` / `min`) and server-side validation (service-layer checks) are tested as separate layers, since client validation can be bypassed and the server is the real enforcement point.
