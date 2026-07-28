@@ -6,12 +6,15 @@ import com.revature.controllers.ExpenseController;
 import com.revature.controllers.ApprovalController;
 
 public class Main {
-    public static void main(String[] args) {
+
+    // Extracted so tests can boot the real app (routes, controllers, services,
+    // DAOs) against a disposable database instead of duplicating route wiring.
+    public static Javalin createApp() {
         AuthController authController = new AuthController();
         ExpenseController expenseController = new ExpenseController();
         ApprovalController approvalController = new ApprovalController();
 
-        Javalin app = Javalin.create(config -> {
+        return Javalin.create(config -> {
             config.bundledPlugins.enableCors(cors -> {
                 cors.addRule(rule -> {
                     rule.allowHost(
@@ -32,7 +35,9 @@ public class Main {
             config.routes.get("/reports/date/{date}", expenseController.getExpenseByDateHandler);
             config.routes.get("/reports/expense/{expenseId}", expenseController.getExpenseByIdHandler);
         });
+    }
 
-        app.start(8080);
+    public static void main(String[] args) {
+        createApp().start(8080);
     }
 }
