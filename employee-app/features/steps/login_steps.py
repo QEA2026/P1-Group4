@@ -1,5 +1,6 @@
 from behave import given, when, then
 from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
 
 @given('I am on the login page')
 def step_on_login_page(context):
@@ -29,3 +30,10 @@ def step_see_welcome(context, message):
     assert message in header.text, \
         f"Expected '{message}', but got '{welcome.text}'"
 
+
+@then('I should see an error message')
+def step_see_error(context):
+    # selenium is checking it too fast before the error message can show
+    WebDriverWait(context.driver, 10).until(
+        lambda d: d.find_element(By.ID, "login-message").text.strip() != ""
+    )
