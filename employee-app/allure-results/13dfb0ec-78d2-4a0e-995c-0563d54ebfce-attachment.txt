@@ -1,1 +1,0 @@
-[31m[1mERROR   [0m service.user_service:user_service.py:34 Error during login for vanessa: db is down
