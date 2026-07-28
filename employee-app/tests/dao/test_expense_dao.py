@@ -16,7 +16,7 @@ class MockDate(datetime.date):
 
 # submit_new_expense_dao
 
-def test_submit_new_expense_returns_true(mocker):
+def test_submit_new_expense_returns_expense_id(mocker):
     mock_connection = mocker.Mock()
     mock_cursor = mocker.Mock()
 
@@ -40,7 +40,7 @@ def test_submit_new_expense_returns_true(mocker):
         category="Food"
     )
 
-    assert result is True
+    assert result == 5
 
     mock_connection.cursor.assert_called_once()
 

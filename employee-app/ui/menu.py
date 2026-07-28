@@ -81,12 +81,12 @@ def submit_expense_menu(user):
 
     result = submit_new_expense(user[0], amount, description, category)
 
-    if result is True:
-        print("Successfully submitted an expense!")
-    elif result is False:
+    if result is False:
         print("Could not submit expense. Please check your input.")
-    else:
+    elif result is None:
         print("An error occurred while submitting the expense.")
+    else:
+        print(f"Successfully submitted expense {result}!")
 
         
 def view_expenses_menu(user):

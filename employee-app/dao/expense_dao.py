@@ -24,7 +24,7 @@ def submit_new_expense_dao(user_id, amount, description, category):
 
         conn.commit()
         logger.info(f"Successfully added expense {expense_id} for user_id: {user_id}")
-        return True
+        return expense_id
     except Exception as e:
         logger.error(f"Error submitting expense: {e}")
         return None
