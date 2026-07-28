@@ -1,0 +1,1638 @@
+{
+  "info": {
+    "_postman_id": "3b727968-d8b0-4ecc-8df9-3d2c7b206983",
+    "name": "employee-app api tests",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "52592873",
+    "_collection_link": "https://go.postman.co/collection/52592873-3b727968-d8b0-4ecc-8df9-3d2c7b206983?source=collection_link"
+  },
+  "item": [
+    {
+      "name": "Happy Paths",
+      "item": [
+        {
+          "name": "login",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Response is JSON\", function () {\r",
+                  "    pm.response.to.be.json;\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Login response contains a message\", function () {\r",
+                  "    const body = pm.response.json();\r",
+                  "\r",
+                  "    pm.expect(body).to.have.property(\"message\");\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Authentication cookie is returned\", function () {\r",
+                  "    pm.expect(pm.response.headers.has(\"Set-Cookie\")).to.be.true;\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Response time is under 2 seconds\", function () {\r",
+                  "    pm.expect(pm.response.responseTime).to.be.below(2000);\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"username\": \"test1\",\r\n  \"password\": \"12345678\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://127.0.0.1:5001/api/login",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "port": "5001",
+              "path": [
+                "api",
+                "login"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "status",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Response is JSON\", function () {\r",
+                  "    pm.response.to.be.json;\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"User is authenticated\", function () {\r",
+                  "    const body = pm.response.json();\r",
+                  "\r",
+                  "    pm.expect(body.authenticated).to.eql(true);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"User object exists\", function () {\r",
+                  "    const body = pm.response.json();\r",
+                  "\r",
+                  "    pm.expect(body).to.have.property(\"user\");\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"User contains required fields\", function () {\r",
+                  "    const body = pm.response.json();\r",
+                  "\r",
+                  "    pm.expect(body.user).to.have.property(\"id\");\r",
+                  "    pm.expect(body.user).to.have.property(\"username\");\r",
+                  "    pm.expect(body.user).to.have.property(\"role\");\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Role is employee\", function () {\r",
+                  "    const body = pm.response.json();\r",
+                  "\r",
+                  "    pm.expect(body.user.role).to.eql(\"employee\");\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Username is test1\", function () {\r",
+                  "    const body = pm.response.json();\r",
+                  "\r",
+                  "    pm.expect(body.user.username).to.eql(\"test1\");\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Response time is under 2 seconds\", function () {\r",
+                  "    pm.expect(pm.response.responseTime).to.be.below(2000);\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://127.0.0.1:5001/api/status",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "port": "5001",
+              "path": [
+                "api",
+                "status"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "create expense",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const body = pm.response.json();\r",
+                  "\r",
+                  "pm.test(\"Status code is 201\", function () {\r",
+                  "    pm.response.to.have.status(201);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Response is JSON\", function () {\r",
+                  "    pm.response.to.be.json;\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Response contains a message\", function () {\r",
+                  "    pm.expect(body).to.have.property(\"message\");\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Success message is correct\", function () {\r",
+                  "    pm.expect(body.message).to.eql(\r",
+                  "        \"Expense submitted successfully\"\r",
+                  "    );\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Response contains an expense ID\", function () {\r",
+                  "    pm.expect(body).to.have.property(\"expense_id\");\r",
+                  "    pm.expect(body.expense_id).to.be.a(\"number\");\r",
+                  "    pm.expect(body.expense_id).to.be.above(0);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Response time is under 2 seconds\", function () {\r",
+                  "    pm.expect(pm.response.responseTime).to.be.below(2000);\r",
+                  "});\r",
+                  "\r",
+                  "if (\r",
+                  "    pm.response.code === 201 &&\r",
+                  "    typeof body.expense_id === \"number\"\r",
+                  ") {\r",
+                  "    pm.collectionVariables.set(\r",
+                  "        \"edit_expense_id\",\r",
+                  "        body.expense_id\r",
+                  "    );\r",
+                  "}"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"amount\": 49.99,\r\n  \"description\": \"Office keyboard\",\r\n  \"category\": \"office\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://127.0.0.1:5001/api/expenses",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "port": "5001",
+              "path": [
+                "api",
+                "expenses"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "get all expenses",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Response is JSON\", function () {\r",
+                  "    pm.response.to.be.json;\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Response is an array\", function () {\r",
+                  "    const body = pm.response.json();\r",
+                  "\r",
+                  "    pm.expect(body).to.be.an(\"array\");\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Array is not empty\", function () {\r",
+                  "    const body = pm.response.json();\r",
+                  "\r",
+                  "    pm.expect(body.length).to.be.above(0);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Every expense has the required fields\", function () {\r",
+                  "    const body = pm.response.json();\r",
+                  "\r",
+                  "    body.forEach(expense => {\r",
+                  "        pm.expect(expense).to.have.property(\"id\");\r",
+                  "        pm.expect(expense).to.have.property(\"amount\");\r",
+                  "        pm.expect(expense).to.have.property(\"description\");\r",
+                  "        pm.expect(expense).to.have.property(\"category\");\r",
+                  "        pm.expect(expense).to.have.property(\"date\");\r",
+                  "        pm.expect(expense).to.have.property(\"status\");\r",
+                  "    });\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Every amount is greater than zero\", function () {\r",
+                  "    const body = pm.response.json();\r",
+                  "\r",
+                  "    body.forEach(expense => {\r",
+                  "        pm.expect(expense.amount).to.be.above(0);\r",
+                  "    });\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Every status is valid\", function () {\r",
+                  "    const body = pm.response.json();\r",
+                  "\r",
+                  "    body.forEach(expense => {\r",
+                  "        pm.expect([\"pending\", \"approved\", \"denied\"]).to.include(expense.status);\r",
+                  "    });\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Response time is under 2 seconds\", function () {\r",
+                  "    pm.expect(pm.response.responseTime).to.be.below(2000);\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://127.0.0.1:5001/api/expenses",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "port": "5001",
+              "path": [
+                "api",
+                "expenses"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "get all expenses filtered by status",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Response is JSON\", function () {\r",
+                  "    pm.response.to.be.json;\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Response is an array\", function () {\r",
+                  "    const body = pm.response.json();\r",
+                  "\r",
+                  "    pm.expect(body).to.be.an(\"array\");\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Every expense has the required fields\", function () {\r",
+                  "    const body = pm.response.json();\r",
+                  "\r",
+                  "    body.forEach(expense => {\r",
+                  "        pm.expect(expense).to.have.property(\"id\");\r",
+                  "        pm.expect(expense).to.have.property(\"amount\");\r",
+                  "        pm.expect(expense).to.have.property(\"description\");\r",
+                  "        pm.expect(expense).to.have.property(\"category\");\r",
+                  "        pm.expect(expense).to.have.property(\"date\");\r",
+                  "        pm.expect(expense).to.have.property(\"status\");\r",
+                  "    });\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Every expense is pending\", function () {\r",
+                  "    const body = pm.response.json();\r",
+                  "\r",
+                  "    body.forEach(expense => {\r",
+                  "        pm.expect(expense.status).to.eql(\"pending\");\r",
+                  "    });\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Response time is under 2 seconds\", function () {\r",
+                  "    pm.expect(pm.response.responseTime).to.be.below(2000);\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://127.0.0.1:5001/api/expenses?status=pending",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "port": "5001",
+              "path": [
+                "api",
+                "expenses"
+              ],
+              "query": [
+                {
+                  "key": "status",
+                  "value": "pending"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "get expense history",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const body = pm.response.json();\r",
+                  "\r",
+                  "pm.test(\"Status code is 200\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Response is JSON\", function () {\r",
+                  "    pm.response.to.be.json;\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Response is an array\", function () {\r",
+                  "    pm.expect(body).to.be.an(\"array\");\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Every history item has required fields\", function () {\r",
+                  "    body.forEach(expense => {\r",
+                  "        pm.expect(expense).to.have.property(\"id\");\r",
+                  "        pm.expect(expense).to.have.property(\"amount\");\r",
+                  "        pm.expect(expense).to.have.property(\"description\");\r",
+                  "        pm.expect(expense).to.have.property(\"date\");\r",
+                  "        pm.expect(expense).to.have.property(\"status\");\r",
+                  "        pm.expect(expense).to.have.property(\"category\");\r",
+                  "    });\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"History contains only approved or denied expenses\", function () {\r",
+                  "    body.forEach(expense => {\r",
+                  "        pm.expect([\"approved\", \"denied\"]).to.include(expense.status);\r",
+                  "    });\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"History does not contain pending expenses\", function () {\r",
+                  "    body.forEach(expense => {\r",
+                  "        pm.expect(expense.status).to.not.eql(\"pending\");\r",
+                  "    });\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Expenses are ordered by date ascending\", function () {\r",
+                  "    for (let i = 1; i < body.length; i++) {\r",
+                  "        pm.expect(body[i].date >= body[i - 1].date).to.be.true;\r",
+                  "    }\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Response time is under 2 seconds\", function () {\r",
+                  "    pm.expect(pm.response.responseTime).to.be.below(2000);\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://127.0.0.1:5001/api/expenses/history",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "port": "5001",
+              "path": [
+                "api",
+                "expenses",
+                "history"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "edit expense",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const body = pm.response.json();\r",
+                  "\r",
+                  "pm.test(\"Status code is 200\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Response is JSON\", function () {\r",
+                  "    pm.response.to.be.json;\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Response contains a message\", function () {\r",
+                  "    pm.expect(body).to.have.property(\"message\");\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Expense updated successfully\", function () {\r",
+                  "    pm.expect(body.message).to.eql(\"Expense updated successfully\");\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Response time is under 2 seconds\", function () {\r",
+                  "    pm.expect(pm.response.responseTime).to.be.below(2000);\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"amount\": 59.99,\r\n  \"description\": \"Updated office keyboard\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://127.0.0.1:5001/api/expenses/{{edit_expense_id}}",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "port": "5001",
+              "path": [
+                "api",
+                "expenses",
+                "{{edit_expense_id}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "create expense - to delete",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const body = pm.response.json();\r",
+                  "\r",
+                  "pm.test(\"Status code is 201\", function () {\r",
+                  "    pm.response.to.have.status(201);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Response is JSON\", function () {\r",
+                  "    pm.response.to.be.json;\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Response contains a message\", function () {\r",
+                  "    pm.expect(body).to.have.property(\"message\");\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Success message is correct\", function () {\r",
+                  "    pm.expect(body.message).to.eql(\r",
+                  "        \"Expense submitted successfully\"\r",
+                  "    );\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Response contains an expense ID\", function () {\r",
+                  "    pm.expect(body).to.have.property(\"expense_id\");\r",
+                  "    pm.expect(body.expense_id).to.be.a(\"number\");\r",
+                  "    pm.expect(body.expense_id).to.be.above(0);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Response time is under 2 seconds\", function () {\r",
+                  "    pm.expect(pm.response.responseTime).to.be.below(2000);\r",
+                  "});\r",
+                  "\r",
+                  "if (\r",
+                  "    pm.response.code === 201 &&\r",
+                  "    typeof body.expense_id === \"number\"\r",
+                  ") {\r",
+                  "    pm.collectionVariables.set(\r",
+                  "        \"delete_expense_id\",\r",
+                  "        body.expense_id\r",
+                  "    );\r",
+                  "}"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"amount\": 99.99,\r\n  \"description\": \"lunch\",\r\n  \"category\": \"meals\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://127.0.0.1:5001/api/expenses",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "port": "5001",
+              "path": [
+                "api",
+                "expenses"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "delete expense",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const body = pm.response.json();\r",
+                  "\r",
+                  "pm.test(\"Status code is 200\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Response is JSON\", function () {\r",
+                  "    pm.response.to.be.json;\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Response contains a message\", function () {\r",
+                  "    pm.expect(body).to.have.property(\"message\");\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Expense deleted successfully\", function () {\r",
+                  "    pm.expect(body.message).to.eql(\"Expense deleted successfully\");\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Response time is under 2 seconds\", function () {\r",
+                  "    pm.expect(pm.response.responseTime).to.be.below(2000);\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "http://127.0.0.1:5001/api/expenses/{{delete_expense_id}}",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "port": "5001",
+              "path": [
+                "api",
+                "expenses",
+                "{{delete_expense_id}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "logout",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const body = pm.response.json();\r",
+                  "\r",
+                  "pm.test(\"Status code is 200\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Response is JSON\", function () {\r",
+                  "    pm.response.to.be.json;\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Response contains a message\", function () {\r",
+                  "    pm.expect(body).to.have.property(\"message\");\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Logout successful\", function () {\r",
+                  "    pm.expect(body.message).to.eql(\"Logout successful\");\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Authentication cookie is cleared\", function () {\r",
+                  "    pm.expect(pm.response.headers.has(\"Set-Cookie\")).to.be.true;\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Response time is under 2 seconds\", function () {\r",
+                  "    pm.expect(pm.response.responseTime).to.be.below(2000);\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "http://127.0.0.1:5001/api/logout",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "port": "5001",
+              "path": [
+                "api",
+                "logout"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Sad Paths",
+      "item": [
+        {
+          "name": "login - Wrong password",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const body = pm.response.json();\r",
+                  "\r",
+                  "pm.test(\"Status code is 401\", function () {\r",
+                  "    pm.response.to.have.status(401);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Response is JSON\", function () {\r",
+                  "    pm.response.to.be.json;\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Invalid credentials error is returned\", function () {\r",
+                  "    pm.expect(body.error).to.eql(\"Invalid credentials\");\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Successful login message is not returned\", function () {\r",
+                  "    pm.expect(body).to.not.have.property(\"message\");\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Response time is under 2 seconds\", function () {\r",
+                  "    pm.expect(pm.response.responseTime).to.be.below(2000);\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"username\": \"test1\",\r\n  \"password\": \"12345678910\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://127.0.0.1:5001/api/login",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "port": "5001",
+              "path": [
+                "api",
+                "login"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "login - Missing username",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const body = pm.response.json();\r",
+                  "\r",
+                  "pm.test(\"Status code is 400\", function () {\r",
+                  "    pm.response.to.have.status(400);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Response is JSON\", function () {\r",
+                  "    pm.response.to.be.json;\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Required credentials error is returned\", function () {\r",
+                  "    pm.expect(body.error).to.eql(\r",
+                  "        \"username and password are required\"\r",
+                  "    );\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Response time is under 2 seconds\", function () {\r",
+                  "    pm.expect(pm.response.responseTime).to.be.below(2000);\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"password\": \"12345678910\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://127.0.0.1:5001/api/login",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "port": "5001",
+              "path": [
+                "api",
+                "login"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "status - Unauthenticated user",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const body = pm.response.json();\r",
+                  "\r",
+                  "pm.test(\"Status code is 200\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Response is JSON\", function () {\r",
+                  "    pm.response.to.be.json;\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"User is not authenticated\", function () {\r",
+                  "    pm.expect(body.authenticated).to.eql(false);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"User information is not returned\", function () {\r",
+                  "    pm.expect(body).to.not.have.property(\"user\");\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://127.0.0.1:5001/api/status",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "port": "5001",
+              "path": [
+                "api",
+                "status"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "login",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Response is JSON\", function () {\r",
+                  "    pm.response.to.be.json;\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Login response contains a message\", function () {\r",
+                  "    const body = pm.response.json();\r",
+                  "\r",
+                  "    pm.expect(body).to.have.property(\"message\");\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Authentication cookie is returned\", function () {\r",
+                  "    pm.expect(pm.response.headers.has(\"Set-Cookie\")).to.be.true;\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Response time is under 2 seconds\", function () {\r",
+                  "    pm.expect(pm.response.responseTime).to.be.below(2000);\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"username\": \"test1\",\r\n  \"password\": \"12345678\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://127.0.0.1:5001/api/login",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "port": "5001",
+              "path": [
+                "api",
+                "login"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "create expense - Missing field",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 201\", function () {\r",
+                  "    pm.response.to.have.status(201);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Response is JSON\", function () {\r",
+                  "    pm.response.to.be.json;\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Response contains a message\", function () {\r",
+                  "    const body = pm.response.json();\r",
+                  "\r",
+                  "    pm.expect(body).to.have.property(\"message\");\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Success message is correct\", function () {\r",
+                  "    const body = pm.response.json();\r",
+                  "\r",
+                  "    pm.expect(body.message).to.eql(\"Expense submitted successfully\");\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Response time is under 2 seconds\", function () {\r",
+                  "    pm.expect(pm.response.responseTime).to.be.below(2000);\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"amount\": 49.99,\r\n  \"description\": \"Office keyboard\",\r\n  \"category\": \"office\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://127.0.0.1:5001/api/expenses",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "port": "5001",
+              "path": [
+                "api",
+                "expenses"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "create expense - Negative amount",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const body = pm.response.json();\r",
+                  "\r",
+                  "pm.test(\"Status code is 400\", function () {\r",
+                  "    pm.response.to.have.status(400);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Invalid expense is rejected\", function () {\r",
+                  "    pm.expect(body.error).to.eql(\r",
+                  "        \"Invalid amount or description\"\r",
+                  "    );\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Success message is not returned\", function () {\r",
+                  "    pm.expect(body).to.not.have.property(\"message\");\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"amount\": -49.99,\r\n    \"description\": \"Invalid expense\",\r\n    \"category\": \"office\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://127.0.0.1:5001/api/expenses",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "port": "5001",
+              "path": [
+                "api",
+                "expenses"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "get all expenses filtered by status - Invalid status",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const body = pm.response.json();\r",
+                  "\r",
+                  "pm.test(\"Status code is 200\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Response is JSON\", function () {\r",
+                  "    pm.response.to.be.json;\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Response is an array\", function () {\r",
+                  "    pm.expect(body).to.be.an(\"array\");\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"No expenses returned for invalid status\", function () {\r",
+                  "    pm.expect(body.length).to.eql(0);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Response time is under 2 seconds\", function () {\r",
+                  "    pm.expect(pm.response.responseTime).to.be.below(2000);\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://127.0.0.1:5001/api/expenses?status=Invalid",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "port": "5001",
+              "path": [
+                "api",
+                "expenses"
+              ],
+              "query": [
+                {
+                  "key": "status",
+                  "value": "Invalid"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "edit expense - Nonexistent expense",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const body = pm.response.json();\r",
+                  "\r",
+                  "pm.test(\"Status code is 400\", function () {\r",
+                  "    pm.response.to.have.status(400);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Response is JSON\", function () {\r",
+                  "    pm.response.to.be.json;\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Edit operation is rejected\", function () {\r",
+                  "    pm.expect(body.error).to.eql(\r",
+                  "        \"Expense not found, not yours, or no longer pending\"\r",
+                  "    );\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Success message is not returned\", function () {\r",
+                  "    pm.expect(body).to.not.have.property(\"message\");\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Response does not indicate successful update\", function () {\r",
+                  "    pm.expect(body.error).to.not.eql(\"Expense updated successfully\");\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Response time is under 2 seconds\", function () {\r",
+                  "    pm.expect(pm.response.responseTime).to.be.below(2000);\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"amount\": 59.99,\r\n    \"description\": \"Attempted invalid update\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://127.0.0.1:5001/api/expenses/99999",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "port": "5001",
+              "path": [
+                "api",
+                "expenses",
+                "99999"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "edit expense - Missing fields",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const body = pm.response.json();\r",
+                  "\r",
+                  "pm.test(\"Status code is 400\", function () {\r",
+                  "    pm.response.to.have.status(400);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Response is JSON\", function () {\r",
+                  "    pm.response.to.be.json;\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Required fields error is returned\", function () {\r",
+                  "    pm.expect(body.error).to.eql(\r",
+                  "        \"amount and description are required\"\r",
+                  "    );\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Update was not successful\", function () {\r",
+                  "    pm.expect(body).to.not.have.property(\"message\");\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Response time is under 2 seconds\", function () {\r",
+                  "    pm.expect(pm.response.responseTime).to.be.below(2000);\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"amount\": 69.99\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://127.0.0.1:5001/api/expenses/17",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "port": "5001",
+              "path": [
+                "api",
+                "expenses",
+                "17"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "delete expense - Nonexistent expense",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const body = pm.response.json();\r",
+                  "\r",
+                  "pm.test(\"Status code is 400\", function () {\r",
+                  "    pm.response.to.have.status(400);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Response is JSON\", function () {\r",
+                  "    pm.response.to.be.json;\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Delete operation is rejected\", function () {\r",
+                  "    pm.expect(body.error).to.eql(\r",
+                  "        \"Expense not found, not yours, or no longer pending\"\r",
+                  "    );\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Success message is not returned\", function () {\r",
+                  "    pm.expect(body).to.not.have.property(\"message\");\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Expense was not deleted successfully\", function () {\r",
+                  "    pm.expect(body.error).to.not.eql(\"Expense deleted successfully\");\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Response time is under 2 seconds\", function () {\r",
+                  "    pm.expect(pm.response.responseTime).to.be.below(2000);\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "http://127.0.0.1:5001/api/expenses/99999",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "port": "5001",
+              "path": [
+                "api",
+                "expenses",
+                "99999"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "logout",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const body = pm.response.json();\r",
+                  "\r",
+                  "pm.test(\"Status code is 200\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Response is JSON\", function () {\r",
+                  "    pm.response.to.be.json;\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Response contains a message\", function () {\r",
+                  "    pm.expect(body).to.have.property(\"message\");\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Logout successful\", function () {\r",
+                  "    pm.expect(body.message).to.eql(\"Logout successful\");\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Authentication cookie is cleared\", function () {\r",
+                  "    pm.expect(pm.response.headers.has(\"Set-Cookie\")).to.be.true;\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Response time is under 2 seconds\", function () {\r",
+                  "    pm.expect(pm.response.responseTime).to.be.below(2000);\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "http://127.0.0.1:5001/api/logout",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "port": "5001",
+              "path": [
+                "api",
+                "logout"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "create expense - Unauthenticated user",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 401\", function () {\r",
+                  "    pm.response.to.have.status(401);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Expense is not created\", function () {\r",
+                  "    const body = pm.response.json();\r",
+                  "\r",
+                  "    pm.expect(body).to.have.property(\"error\");\r",
+                  "    pm.expect(body).to.not.have.property(\"message\");\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"amount\": 49.99,\r\n  \"description\": \"Office keyboard\",\r\n  \"category\": \"office\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://127.0.0.1:5001/api/expenses",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "port": "5001",
+              "path": [
+                "api",
+                "expenses"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "get all expenses - Unauthenticated",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const body = pm.response.json();\r",
+                  "\r",
+                  "pm.test(\"Status code is 401\", function () {\r",
+                  "    pm.response.to.have.status(401);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Response is JSON\", function () {\r",
+                  "    pm.response.to.be.json;\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Unauthorized error is returned\", function () {\r",
+                  "    pm.expect(body).to.have.property(\"error\");\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Expenses are not returned\", function () {\r",
+                  "    pm.expect(body).to.not.be.an(\"array\");\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Response does not contain expense data\", function () {\r",
+                  "    pm.expect(body).to.not.have.property(\"expenses\");\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Response time is under 2 seconds\", function () {\r",
+                  "    pm.expect(pm.response.responseTime).to.be.below(2000);\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://127.0.0.1:5001/api/expenses",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "port": "5001",
+              "path": [
+                "api",
+                "expenses"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "get expense history - Unauthenticated",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const body = pm.response.json();\r",
+                  "\r",
+                  "pm.test(\"Status code is 401\", function () {\r",
+                  "    pm.response.to.have.status(401);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Response is JSON\", function () {\r",
+                  "    pm.response.to.be.json;\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Authentication error is returned\", function () {\r",
+                  "    pm.expect(body).to.have.property(\"error\");\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Expense history is not returned\", function () {\r",
+                  "    pm.expect(body).to.not.be.an(\"array\");\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Response time is under 2 seconds\", function () {\r",
+                  "    pm.expect(pm.response.responseTime).to.be.below(2000);\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://127.0.0.1:5001/api/expenses/history",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "port": "5001",
+              "path": [
+                "api",
+                "expenses",
+                "history"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "edit_expense_id",
+      "value": ""
+    },
+    {
+      "key": "delete_expense_id",
+      "value": ""
+    }
+  ]
+}

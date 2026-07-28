@@ -121,12 +121,15 @@ def submit_expense_route():
 
     user_id = get_current_user()[0]
     result = submit_new_expense(user_id, amount, description, category)
-    if result is True:
-        return jsonify({"message": "Expense submitted successfully"}), 201
-    elif result is False:
+    if result is False:
         return jsonify({"error": "Invalid amount or description"}), 400
-    else:
+    elif result is None:
         return jsonify({"error": "An error occurred while submitting the expense"}), 500
+    else:
+        return jsonify({
+            "message": "Expense submitted successfully",
+            "expense_id": result,
+        }), 201
 
 
 @app.route("/api/expenses", methods=["GET"])

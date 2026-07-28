@@ -76,7 +76,8 @@ def test_submit_new_expense_creates_expense_and_approval(temp_database):
         "Food"
     )
 
-    assert result is True
+    assert isinstance(result, int)
+    assert result > 0
 
     expenses = get_expense_by_status(1, "pending")
 
@@ -90,6 +91,7 @@ def test_submit_new_expense_creates_expense_and_approval(temp_database):
     ]
 
     assert len(matching_expenses) == 1
+    assert result == matching_expenses[0][0]
 
 
 def test_submit_new_expense_returns_none_when_user_does_not_exist(temp_database):
