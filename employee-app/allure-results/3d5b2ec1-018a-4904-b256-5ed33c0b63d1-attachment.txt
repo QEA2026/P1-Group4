@@ -1,1 +1,0 @@
-[33mWARNING [0m service.expense_service:expense_service.py:28 Failed to submit expense for userid: 1 - database error
