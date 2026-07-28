@@ -1,1 +1,0 @@
-[33mWARNING [0m service.expense_service:expense_service.py:17 Invalid amount submitted by user 1: -50
