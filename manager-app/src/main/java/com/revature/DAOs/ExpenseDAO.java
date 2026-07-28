@@ -173,4 +173,23 @@ public class ExpenseDAO implements ExpenseDAOInterface{
         logger.warn("No expense found with id: {}", expenseId);
         throw new ResourceNotFoundException("Expense not found with id: " + expenseId);
     }
+
+    public void resetExpenseStatuses() {
+        //Used in selenium tests to reset approved or denied expenses to pending
+        String sql = """
+        UPDATE approvals
+        SET status = 'pending',
+            reviewer = NULL,
+            comment = NULL
+        """;
+
+        try (Connection conn = ConnectionUtil.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.executeUpdate();
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
 }
