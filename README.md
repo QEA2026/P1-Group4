@@ -131,14 +131,14 @@ python -m http.server 5500 --directory src\main\resources
 mvn clean compile exec:java "-Dexec.mainClass=com.revature.Main"
 ```
 
-**Cucumber**
+**Cucumber**:
 **Run this in a 3rd terminal**:  
 
 ```bash
 mvn test "-Dcucumber.filter.tags=@reports or @expense or @login"
 ```
 
-**Selenium**
+**Selenium**:
 **Run this to only run the ManagereDashBoardTests since they take a while**: 
 ```bash
 mvn "-Dtest=ManagerDashboardTests" test
