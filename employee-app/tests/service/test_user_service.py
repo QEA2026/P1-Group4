@@ -1,5 +1,15 @@
+from datetime import datetime, timedelta, timezone
 from unittest.mock import patch
-from service.user_service import login
+import jwt
+import pytest
+from service.user_service import (
+    login,
+    generate_jwt_token,
+    validate_jwt_token,
+    get_user_by_token,
+    JWT_SECRET_KEY,
+    JWT_ALGORITHM,
+)
 
 
 # The DB row shape find_user_by_username returns:
@@ -72,7 +82,7 @@ def test_login_wrong_password_returns_none(mock_find, mock_bcrypt):
 @patch('service.user_service.bcrypt')
 @patch('service.user_service.find_user_by_username')
 def test_login_none_password_returns_none(mock_find, mock_bcrypt):
-    # password.encode() on None raises AttributeError -> caught -> None
+
     mock_find.return_value = fake_user()
 
     result = login("vanessa", None)
@@ -81,7 +91,6 @@ def test_login_none_password_returns_none(mock_find, mock_bcrypt):
     mock_bcrypt.checkpw.assert_not_called()
 
 
-# ── edge case: DAO blows up -> caught -> returns None ──
 
 @patch('service.user_service.find_user_by_username')
 def test_login_dao_exception_returns_none(mock_find):
@@ -90,3 +99,90 @@ def test_login_dao_exception_returns_none(mock_find):
     result = login("vanessa", "correct-password")
 
     assert result is None
+
+
+# ── generate_jwt_token ──────────────────────────────
+
+def test_generate_jwt_token_contains_expected_claims():
+    user = fake_user()
+
+    token = generate_jwt_token(user)
+    payload = jwt.decode(token, JWT_SECRET_KEY, algorithms=[JWT_ALGORITHM])
+
+    assert payload["user_id"] == user[0]
+    assert payload["username"] == user[1]
+    assert payload["role"] == user[3]
+    assert "iat" in payload
+    assert "exp" in payload
+
+
+# ── validate_jwt_token ──────────────────────────────
+
+def test_validate_jwt_token_valid_token_returns_payload():
+    token = generate_jwt_token(fake_user())
+
+    payload = validate_jwt_token(token)
+
+    assert payload is not None
+    assert payload["username"] == "vanessa"
+
+
+def test_validate_jwt_token_expired_returns_none():
+    now = datetime.now(timezone.utc)
+    expired_payload = {
+        "user_id": 1,
+        "username": "vanessa",
+        "role": "employee",
+        "iat": now - timedelta(hours=25),
+        "exp": now - timedelta(hours=1),
+    }
+    expired_token = jwt.encode(expired_payload, JWT_SECRET_KEY, algorithm=JWT_ALGORITHM)
+
+    result = validate_jwt_token(expired_token)
+
+    assert result is None
+
+
+def test_validate_jwt_token_invalid_token_returns_none():
+    result = validate_jwt_token("notatoken")
+
+    assert result is None
+
+
+def test_validate_jwt_token_missing_required_claim_returns_none():
+    now = datetime.now(timezone.utc)
+    incomplete_payload = {
+        "user_id": 1,
+        "iat": now,
+        "exp": now + timedelta(hours=1),
+    }
+    token = jwt.encode(incomplete_payload, JWT_SECRET_KEY, algorithm=JWT_ALGORITHM)
+
+    result = validate_jwt_token(token)
+
+    assert result is None
+
+
+# ── get_user_by_token ───────────────────────────────
+
+@patch('service.user_service.find_user_by_id')
+@patch('service.user_service.validate_jwt_token')
+def test_get_user_by_token_valid_token_returns_user(mock_validate, mock_find_by_id):
+    mock_validate.return_value = {"user_id": 1, "username": "vanessa", "role": "employee"}
+    mock_find_by_id.return_value = fake_user()
+
+    result = get_user_by_token("some-token")
+
+    assert result == fake_user()
+    mock_find_by_id.assert_called_once_with(1)
+
+
+@patch('service.user_service.find_user_by_id')
+@patch('service.user_service.validate_jwt_token')
+def test_get_user_by_token_invalid_token_returns_none(mock_validate, mock_find_by_id):
+    mock_validate.return_value = None
+
+    result = get_user_by_token("bad-token")
+
+    assert result is None
+    mock_find_by_id.assert_not_called()
