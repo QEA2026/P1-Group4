@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Employee Expense Dashboard</title>
+    <link rel="stylesheet" href="/static/style.css">
 </head>
 <body>
     <div id="header">
@@ -11,6 +12,7 @@
         <div style="float: right;">
             <span>Welcome, <span id="username-display"></span></span>
             <button id="logout-btn" style="margin-left: 10px;">Logout</button>
+            <button id="theme-toggle" type="button">🌙 Dark</button>
         </div>
         <div style="clear: both;"></div>
     </div>
@@ -87,5 +89,14 @@
 
     <!-- JavaScript -->
     <script src="/static/expenses.js"></script>
+    
+    <script>
+        const toggle = document.getElementById('theme-toggle');
+        toggle.addEventListener('click', () => {
+            const dark = document.body.getAttribute('data-theme') === 'dark';
+            document.body.setAttribute('data-theme', dark ? 'light' : 'dark');
+            toggle.textContent = dark ? '🌙 Dark' : '☀️ Light';
+        });
+    </script>
 </body>
 </html>

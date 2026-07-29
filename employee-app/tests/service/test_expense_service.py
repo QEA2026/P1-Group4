@@ -110,12 +110,45 @@ def test_edit_negative_amount_rejected(mock_edit):
     mock_edit.assert_not_called()
 
 
+@patch('service.expense_service.edit_expense_dao')
+def test_edit_empty_description_rejected(mock_edit):
+    result = edit_expense(1, 1, "50", "   ")
+
+    assert result is False
+    mock_edit.assert_not_called()
+
+
+@patch('service.expense_service.edit_expense_dao')
+def test_edit_dao_failure_returns_false(mock_edit):
+    mock_edit.return_value = False   # valid input, but not pending / doesn't exist
+
+    result = edit_expense(1, 1, "50", "updated desc")
+
+    assert result is False
+    mock_edit.assert_called_once()
+
+
+@patch('service.expense_service.edit_expense_dao')
+def test_edit_non_numeric_amount_returns_none(mock_edit):
+    # float("abc") raises ValueError -> caught -> returns None
+    result = edit_expense(1, 1, "abc", "updated desc")
+
+    assert result is None
+    mock_edit.assert_not_called()
+
+
 # ── delete_expense / get_expense_history (passthrough)
 
 @patch('service.expense_service.delete_expense_dao')
 def test_delete_success(mock_delete):
     mock_delete.return_value = True
     assert delete_expense(1, 5) is True
+
+
+@patch('service.expense_service.delete_expense_dao')
+def test_delete_failure_returns_false(mock_delete):
+    mock_delete.return_value = False   # not pending / doesn't exist
+    assert delete_expense(1, 5) is False
 
 
 @patch('service.expense_service.get_expense_history_dao')

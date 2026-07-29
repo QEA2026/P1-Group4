@@ -100,6 +100,7 @@ With coverage:
 
 ```bash
 pytest tests/ --cov=service --cov-report=term-missing
+pytest tests/ --cov=service --cov-branch --cov-report=term-missing
 ```
 
 ### Python — E2E Tests (Behave + Selenium)
