@@ -13,7 +13,7 @@ import java.sql.*;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class UserDAOIntegrationTests {
+public class UserDAOIT {
     private UserDAO userDAO = new UserDAO();
     private Connection mockConn;
     private PreparedStatement mockPs;

@@ -14,7 +14,7 @@ import java.time.Duration;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class ManagerDashboardTests {
+public class ManagerDashboardSeleniumTest {
     private WebDriver driver;
     private final String BASE_URL = "http://localhost:5500";
     private WebDriverWait wait;

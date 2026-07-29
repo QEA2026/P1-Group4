@@ -8,8 +8,6 @@ import org.mockito.*;
 import org.mockito.junit.jupiter.MockitoExtension;
 import io.qameta.allure.Description;
 
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.sql.*;
 
 //import static com.revature.DAOs.UserDAO.logger;
@@ -18,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(MockitoExtension.class)
 @DisplayName("UserDAO Test Parent Class")
-class UserDAOTest {
+class UserDAOUnitTest {
 
     private UserDAO userDAO = new UserDAO();
     private Connection mockConn;

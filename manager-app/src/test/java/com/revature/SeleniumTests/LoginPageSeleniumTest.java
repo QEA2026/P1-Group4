@@ -1,6 +1,5 @@
 package com.revature.SeleniumTests;
 
-import com.revature.DAOs.ExpenseDAO;
 import org.junit.jupiter.api.*;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
@@ -14,7 +13,7 @@ import java.time.Duration;
 import static org.junit.jupiter.api.Assertions.*;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-public class LoginPageTests {
+public class LoginPageSeleniumTest {
     private WebDriver driver;
     private final String BASE_URL = "http://localhost:5500";
     private WebDriverWait wait;

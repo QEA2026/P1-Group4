@@ -24,7 +24,7 @@ import static org.junit.jupiter.api.Assertions.*;
 // against a real, disposable SQLite database file created fresh per test via @TempDir.
 // Relies on ConnectionUtil honoring the "expense.db.path" system property.
 @DisplayName("ExpenseDAO Integration Tests")
-class ExpenseDAOIntegrationTest {
+class ExpenseDAOIT {
 
     @TempDir
     Path tempDir;

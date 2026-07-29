@@ -28,7 +28,7 @@ import static org.mockito.Mockito.*;
 // from P1-Group4\manager-app\src\main\java\com\revature\DAOs\ExpenseDAO.java
 @ExtendWith(MockitoExtension.class)
 @DisplayName("ExpenseDAO Unit Tests")
-class ExpenseDAOTest {
+class ExpenseDAOUnitTest {
     //Setup
     @Mock private Connection conn;
     @Mock private PreparedStatement ps;
