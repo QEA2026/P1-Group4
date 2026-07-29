@@ -121,14 +121,29 @@ behave features/login.feature
 ### Java - E2E Tests (Cucumber + Selenium)
 The app must be running in two separate terminals first. Run it from the 'manager-app' folder:
 
-**Run this in one terminal**: python -m http.server 5500 --directory src\main\resources  
-**Run this in another terminal**: mvn clean compile exec:java "-Dexec.mainClass=com.revature.Main"
+**Run this in one terminal**: 
+```bash
+python -m http.server 5500 --directory src\main\resources
+```
+
+**Run this in another terminal**: 
+```bash 
+mvn clean compile exec:java "-Dexec.mainClass=com.revature.Main"
+```
 
 **Cucumber**
-**Run this in a 3rd terminal**: mvn test "-Dcucumber.filter.tags=@reports or @expense or @login" 
+**Run this in a 3rd terminal**:  
+
+```bash
+mvn test "-Dcucumber.filter.tags=@reports or @expense or @login"
+```
 
 **Selenium**
-**Run this to only run the ManagereDashBoardTests since they take a while**: mvn "-Dtest=ManagerDashboardTests" test
+**Run this to only run the ManagereDashBoardTests since they take a while**: 
+```bash
+mvn "-Dtest=ManagerDashboardTests" test
+```
+
 If you want to run the other files (GenerateReportsTests or LoginPageTests) replace ManagerDashboardTests with that file name
 
 ### Java — Unit Tests (JUnit 5 + Mockito)
