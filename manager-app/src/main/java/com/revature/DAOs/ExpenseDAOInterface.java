@@ -22,4 +22,5 @@ public interface ExpenseDAOInterface {
     // Get a single expense by its id -> for approving and denying
     Expense getExpenseById(int expenseId);
 
+    public void resetExpenseStatuses();
 }

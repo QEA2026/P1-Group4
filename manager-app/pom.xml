@@ -15,6 +15,7 @@
     <mockito.version>5.23.0</mockito.version>
     <allure.version>2.35.3</allure.version>
     <aspectj.version>1.9.25</aspectj.version>
+    <cucumber.version>7.14.0</cucumber.version>
   </properties>
 
   <dependencyManagement>
@@ -99,6 +100,27 @@
       <groupId>io.rest-assured</groupId>
       <artifactId>rest-assured</artifactId>
       <version>5.5.1</version>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.seleniumhq.selenium</groupId>
+      <artifactId>selenium-java</artifactId>
+      <version>4.46.0</version>
+    </dependency>
+
+    <dependency>
+      <groupId>io.cucumber</groupId>
+      <artifactId>cucumber-java</artifactId>
+      <version>${cucumber.version}</version>
+      <scope>test</scope>
+    </dependency>
+
+    <!-- Cucumber JUnit Platform Engine -->
+    <dependency>
+      <groupId>io.cucumber</groupId>
+      <artifactId>cucumber-junit-platform-engine</artifactId>
+      <version>${cucumber.version}</version>
       <scope>test</scope>
     </dependency>
 
