@@ -1,0 +1,1 @@
+[1m[31mERROR   [0m service.expense_service:expense_service.py:32 Error couldn't convert abc to float: could not convert string to float: 'abc'

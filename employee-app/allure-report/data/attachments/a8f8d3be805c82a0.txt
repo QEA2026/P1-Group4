@@ -1,0 +1,1 @@
+[1m[31mERROR   [0m dao.expense_dao:expense_dao.py:108 Error retrieving expenses: Database error
