@@ -48,12 +48,11 @@ class ApprovalDAOIT {
             approvalDAO = new ApprovalDAO();
 
             connectionUtilMock = mockStatic(ConnectionUtil.class);
-            // every call to ConnectionUtil.getConnection() opens a fresh real
-            // H2 connection, matching how the DAO actually behaves against SQLite
+            
             connectionUtilMock.when(ConnectionUtil::getConnection)
                     .thenAnswer(invocation -> DriverManager.getConnection(H2_URL));
 
-            // start each test with a clean, known table state
+            // start each test with a clean state
             try (Connection conn = DriverManager.getConnection(H2_URL);
                  Statement stmt = conn.createStatement()) {
                 stmt.execute("DELETE FROM approvals");
