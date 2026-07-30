@@ -137,7 +137,7 @@ def test_edit_non_numeric_amount_returns_none(mock_edit):
     mock_edit.assert_not_called()
 
 
-# ── delete_expense / get_expense_history (passthrough)
+# ── delete_expense / get_expense_history (just passed through)
 
 @patch('service.expense_service.delete_expense_dao')
 def test_delete_success(mock_delete):
