@@ -1,0 +1,1 @@
+[33mWARNING [0m service.user_service:user_service.py:33 Cannot login to employee side with manager credentials

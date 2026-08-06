@@ -1,0 +1,1 @@
+[33mWARNING [0m dao.expense_dao:expense_dao.py:180 Expense 3 for user 2 is not pending - cannot delete
