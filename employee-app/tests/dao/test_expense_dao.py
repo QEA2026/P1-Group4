@@ -21,7 +21,7 @@ def test_submit_new_expense_returns_expense_id(mocker):
     mock_cursor = mocker.Mock()
 
     mock_connection.cursor.return_value = mock_cursor
-    mock_cursor.lastrowid = 5
+    mock_cursor.fetchone.return_value = (5,)
 
     mocker.patch(
         "dao.expense_dao.get_connection",
@@ -46,19 +46,21 @@ def test_submit_new_expense_returns_expense_id(mocker):
 
     assert mock_cursor.execute.call_count == 2
 
-    mock_cursor.execute.assert_any_call(
-        " INSERT INTO expenses (user_id, amount, description, date, category) values (?,?,?,?,?)",
-        (
-            1,
-            75.50,
-            "Team breakfast",
-            "2026-07-26",
-            "Food"
-        )
+    expense_insert_call = mock_cursor.execute.call_args_list[0]
+
+    assert "INSERT INTO expenses" in expense_insert_call.args[0]
+    assert "RETURNING id" in expense_insert_call.args[0]
+
+    assert expense_insert_call.args[1] == (
+        1,
+        75.50,
+        "Team breakfast",
+        "2026-07-26",
+        "Food"
     )
 
     mock_cursor.execute.assert_any_call(
-        " INSERT INTO approvals (expense_id, status) values (?,?)",
+        " INSERT INTO approvals (expense_id, status) values (%s,%s)",
         (
             5,
             "pending"
@@ -143,7 +145,7 @@ def test_get_expenses_returns_expenses(mocker):
                    expenses.category
             FROM expenses
             JOIN approvals ON approvals.expense_id = expenses.id
-            WHERE expenses.user_id = ?
+            WHERE expenses.user_id = %s
             ORDER BY expenses.date
         """,
         (1,)
@@ -232,8 +234,8 @@ def test_get_expense_by_status_returns_matching_expenses(mocker):
                    expenses.category
             FROM expenses
             JOIN approvals ON approvals.expense_id = expenses.id
-            WHERE expenses.user_id = ?
-            AND approvals.status = ?
+            WHERE expenses.user_id = %s
+            AND approvals.status = %s
             ORDER BY expenses.date
         """,
         (
@@ -335,7 +337,7 @@ def test_get_expense_history_returns_completed_expenses(mocker):
                    expenses.category
             FROM expenses
             JOIN approvals ON approvals.expense_id = expenses.id
-            WHERE expenses.user_id = ?
+            WHERE expenses.user_id = %s
             AND approvals.status IN ('approved', 'denied')
             ORDER BY expenses.date
         """,
@@ -418,8 +420,8 @@ def test_edit_expense_updates_pending_expense(mocker):
             SELECT approvals.status
             FROM approvals
             JOIN expenses ON approvals.expense_id = expenses.id
-            WHERE expenses.id = ?
-            AND expenses.user_id = ?
+            WHERE expenses.id = %s
+            AND expenses.user_id = %s
         """,
         (
             1,
@@ -430,9 +432,9 @@ def test_edit_expense_updates_pending_expense(mocker):
     mock_cursor.execute.assert_any_call(
         """
             UPDATE expenses
-            SET amount = ?, description = ?
-            WHERE id = ?
-            AND user_id = ?
+            SET amount = %s, description = %s
+            WHERE id = %s
+            AND user_id = %s
         """,
         (
             35.00,
@@ -553,8 +555,8 @@ def test_delete_expense_deletes_pending_expense(mocker):
             SELECT approvals.status
             FROM approvals
             JOIN expenses ON approvals.expense_id = expenses.id
-            WHERE expenses.id = ?
-            AND expenses.user_id = ?
+            WHERE expenses.id = %s
+            AND expenses.user_id = %s
         """,
         (
             1,
@@ -563,12 +565,12 @@ def test_delete_expense_deletes_pending_expense(mocker):
     )
 
     mock_cursor.execute.assert_any_call(
-        "DELETE from approvals WHERE expense_id = ?",
+        "DELETE from approvals WHERE expense_id = %s",
         (1,)
     )
 
     mock_cursor.execute.assert_any_call(
-        "DELETE FROM expenses WHERE user_id = ? AND id = ?",
+        "DELETE FROM expenses WHERE user_id = %s AND id = %s",
         (
             1,
             1

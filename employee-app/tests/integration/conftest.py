@@ -1,30 +1,40 @@
-import sqlite3
+import psycopg2
 import pytest
+import os
 
 
 @pytest.fixture
-def temp_database(tmp_path, mocker):
+def temp_database(mocker):
 
-    database_path = tmp_path / "test_expense_manager.db"
+    connection = psycopg2.connect(
+        host=os.getenv("DB_HOST", "localhost"),
+        port=os.getenv("DB_PORT", "5432"),
+        dbname=os.getenv("DB_NAME", "expense_manager"),
+        user=os.getenv("DB_USER", "postgres"),
+        password=os.getenv("DB_PASSWORD", "newPostgresqlUser26")
+    )
+    
 
-    connection = sqlite3.connect(database_path)
+    cursor = connection.cursor()
 
-    connection.execute("PRAGMA foreign_keys = ON")
+    cursor.execute("""
+        DROP TABLE IF EXISTS approvals, expenses, users CASCADE
+    """)
 
     # Create the table to test
 
-    connection.execute("""
+    cursor.execute("""
         CREATE TABLE users (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            id SERIAL PRIMARY KEY,
             username TEXT UNIQUE NOT NULL,
             password TEXT NOT NULL,
             role TEXT NOT NULL
         )
     """)
 
-    connection.execute("""
+    cursor.execute("""
         CREATE TABLE expenses (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            id SERIAL PRIMARY KEY,
             user_id INTEGER NOT NULL,
             amount REAL NOT NULL,
             description TEXT NOT NULL,
@@ -37,9 +47,9 @@ def temp_database(tmp_path, mocker):
         )
     """)
 
-    connection.execute("""
+    cursor.execute("""
         CREATE TABLE approvals (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            id SERIAL PRIMARY KEY,
             expense_id INTEGER UNIQUE NOT NULL,
             status TEXT NOT NULL DEFAULT 'pending',
             reviewer INTEGER,
@@ -53,7 +63,7 @@ def temp_database(tmp_path, mocker):
     """)
 
 
-    connection.execute(
+    cursor.execute(
         """
         INSERT INTO users (
             id,
@@ -61,7 +71,7 @@ def temp_database(tmp_path, mocker):
             password,
             role
         )
-        VALUES (?, ?, ?, ?)
+        VALUES (%s, %s, %s, %s)
         """,
         (
             1,
@@ -71,7 +81,7 @@ def temp_database(tmp_path, mocker):
         )
     )
 
-    connection.execute(
+    cursor.execute(
         """
         INSERT INTO users (
             id,
@@ -79,7 +89,7 @@ def temp_database(tmp_path, mocker):
             password,
             role
         )
-        VALUES (?, ?, ?, ?)
+        VALUES (%s, %s, %s, %s)
         """,
         (
             2,
@@ -90,7 +100,7 @@ def temp_database(tmp_path, mocker):
     )
 
 
-    connection.execute(
+    cursor.execute(
         """
         INSERT INTO expenses (
             id,
@@ -100,7 +110,7 @@ def temp_database(tmp_path, mocker):
             date,
             category
         )
-        VALUES (?, ?, ?, ?, ?, ?)
+        VALUES (%s, %s, %s, %s, %s, %s)
         """,
         (
             1,
@@ -111,7 +121,7 @@ def temp_database(tmp_path, mocker):
             "Food"
         )
     )
-    connection.execute(
+    cursor.execute(
         """
         INSERT INTO expenses (
             id,
@@ -121,7 +131,7 @@ def temp_database(tmp_path, mocker):
             date,
             category
         )
-        VALUES (?, ?, ?, ?, ?, ?)
+        VALUES (%s, %s, %s, %s, %s, %s)
         """,
         (
             2,
@@ -133,7 +143,7 @@ def temp_database(tmp_path, mocker):
         )
     )
 
-    connection.execute(
+    cursor.execute(
         """
         INSERT INTO expenses (
             id,
@@ -143,7 +153,7 @@ def temp_database(tmp_path, mocker):
             date,
             category
         )
-        VALUES (?, ?, ?, ?, ?, ?)
+        VALUES (%s, %s, %s, %s, %s, %s)
         """,
         (
             3,
@@ -155,7 +165,7 @@ def temp_database(tmp_path, mocker):
         )
     )
 
-    connection.execute(
+    cursor.execute(
         """
         INSERT INTO expenses (
             id,
@@ -165,7 +175,7 @@ def temp_database(tmp_path, mocker):
             date,
             category
         )
-        VALUES (?, ?, ?, ?, ?, ?)
+        VALUES (%s, %s, %s, %s, %s, %s)
         """,
         (
             4,
@@ -177,7 +187,7 @@ def temp_database(tmp_path, mocker):
         )
     )
 
-    connection.execute(
+    cursor.execute(
     """
     INSERT INTO approvals (
         id,
@@ -187,7 +197,7 @@ def temp_database(tmp_path, mocker):
         comment,
         review_date
     )
-    VALUES (?, ?, ?, ?, ?, ?)
+    VALUES (%s, %s, %s, %s, %s, %s)
     """,
     (
         1,
@@ -199,7 +209,7 @@ def temp_database(tmp_path, mocker):
     )
 )
 
-    connection.execute(
+    cursor.execute(
         """
         INSERT INTO approvals (
             id,
@@ -209,7 +219,7 @@ def temp_database(tmp_path, mocker):
             comment,
             review_date
         )
-        VALUES (?, ?, ?, ?, ?, ?)
+        VALUES (%s, %s, %s, %s, %s, %s)
         """,
         (
             2,
@@ -221,7 +231,7 @@ def temp_database(tmp_path, mocker):
         )
     )
 
-    connection.execute(
+    cursor.execute(
         """
         INSERT INTO approvals (
             id,
@@ -231,7 +241,7 @@ def temp_database(tmp_path, mocker):
             comment,
             review_date
         )
-        VALUES (?, ?, ?, ?, ?, ?)
+        VALUES (%s, %s, %s, %s, %s, %s)
         """,
         (
             3,
@@ -243,7 +253,7 @@ def temp_database(tmp_path, mocker):
         )
     )
 
-    connection.execute(
+    cursor.execute(
         """
         INSERT INTO approvals (
             id,
@@ -253,7 +263,7 @@ def temp_database(tmp_path, mocker):
             comment,
             review_date
         )
-        VALUES (?, ?, ?, ?, ?, ?)
+        VALUES (%s, %s, %s, %s, %s, %s)
         """,
         (
             4,
@@ -264,15 +274,33 @@ def temp_database(tmp_path, mocker):
             None
         )
     )
+    cursor.execute("SELECT * FROM users")
+    print(cursor.fetchall())
+
+    cursor.execute("""
+        SELECT setval('expenses_id_seq', (SELECT MAX(id) FROM expenses));
+    """)
+
+    cursor.execute("""
+        SELECT setval('users_id_seq', (SELECT MAX(id) FROM users));
+    """)
+
+    cursor.execute("""
+        SELECT setval('approvals_id_seq', (SELECT MAX(id) FROM approvals));
+    """)
 
     connection.commit()
     connection.close()
 
 
     def get_test_connection():
-        test_connection = sqlite3.connect(database_path)
-        test_connection.execute("PRAGMA foreign_keys = ON")
-        return test_connection
+        return psycopg2.connect(
+            host=os.getenv("DB_HOST", "localhost"),
+            port=os.getenv("DB_PORT", "5432"),
+            dbname=os.getenv("DB_NAME", "expense_manager"),
+            user=os.getenv("DB_USER", "postgres"),
+            password=os.getenv("DB_PASSWORD", "newPostgresqlUser26")
+        )
 
     # Patch both get_connection methods in expense and user dao
     mocker.patch(
@@ -285,7 +313,17 @@ def temp_database(tmp_path, mocker):
         side_effect=get_test_connection
     )
 
-    yield database_path
+    yield
 
-    if database_path.exists():
-        database_path.unlink()
+    connection = get_test_connection()
+    print(os.getenv("DB_NAME", "expense_manager"))
+    cursor = connection.cursor()
+
+    cursor.execute("""
+        TRUNCATE TABLE approvals, expenses, users
+        RESTART IDENTITY CASCADE
+    """)
+
+    connection.commit()
+    cursor.close()
+    connection.close()
