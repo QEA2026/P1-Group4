@@ -269,6 +269,43 @@
         <version>3.0.3</version>
       </plugin>
 
+      <!-- Builds a single self-contained "fat jar" (app + all dependencies)
+           so Docker (or anyone) can run it with just `java -jar app.jar` -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-shade-plugin</artifactId>
+        <version>3.6.0</version>
+        <executions>
+          <execution>
+            <phase>package</phase>
+            <goals>
+              <goal>shade</goal>
+            </goals>
+            <configuration>
+              <finalName>manager-app</finalName>
+              <transformers>
+                <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                  <mainClass>com.revature.Main</mainClass>
+                </transformer>
+              </transformers>
+              <!-- Signed dependency jars include signature files that no longer
+                   match once everything is merged into one jar; strip them or
+                   the JVM refuses to load it ("Invalid signature file digest") -->
+              <filters>
+                <filter>
+                  <artifact>*:*</artifact>
+                  <excludes>
+                    <exclude>META-INF/*.SF</exclude>
+                    <exclude>META-INF/*.DSA</exclude>
+                    <exclude>META-INF/*.RSA</exclude>
+                  </excludes>
+                </filter>
+              </filters>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
     </plugins>
 
   </build>

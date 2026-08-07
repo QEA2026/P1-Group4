@@ -74,6 +74,8 @@ docs/_build/
 # PyBuilder
 .pybuilder/
 target/
+dependency-reduced-pom.xml
+manager-app/allure-reports/
 
 # Jupyter Notebook
 .ipynb_checkpoints
