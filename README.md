@@ -35,20 +35,82 @@ Both applications read from and write to the same `database/expense_manager.db`,
 
 ---
 
-## Database Setup
+## Database Setup (PostgreSQL + Docker)
 
-From the repo root, create and seed the shared database:
+This project uses PostgreSQL as the database. The database runs inside a Docker container using Docker Compose.
 
-```bash
-python3 setup_db.py
+The PostgreSQL configuration values are stored in an environment file (`.env`) that is **not committed to Git** for security purposes.
+
+---
+
+## Environment Variables Setup
+
+Before running the database container, create a file named:
+
+```
+.env
 ```
 
-To reset it completely:
+Place this file in the **root directory of the project** (the same location as `docker-compose.override.yml`).
+
+Add the following environment variables:
+
+```env
+POSTGRES_DB=expense_manager
+POSTGRES_USER=postgres
+POSTGRES_PASSWORD=newPostgresqlUser26
+POSTGRES_PORT=5432
+
+DB_HOST=postgres
+DB_NAME=expense_manager
+DB_USER=postgres
+DB_PASSWORD=newPostgresqlUser26
+DB_PORT=5432
+```
+
+### Environment Variable Explanation
+
+| Variable | Description |
+|-----------|-------------|
+| `POSTGRES_DB` | Name of the PostgreSQL database created when the container starts |
+| `POSTGRES_USER` | PostgreSQL username |
+| `POSTGRES_PASSWORD` | PostgreSQL password |
+| `POSTGRES_PORT` | Port PostgreSQL runs on |
+| `DB_HOST` | Database hostname used by the application container |
+| `DB_NAME` | Database name used by the application |
+| `DB_USER` | Application database username |
+| `DB_PASSWORD` | Application database password |
+| `DB_PORT` | Database connection port |
+
+---
+
+## Starting the PostgreSQL Container
+
+To start the database container, run:
 
 ```bash
-rm database/expense_manager.db
-python3 setup_db.py
+docker compose -f docker-compose.override.yml up
 ```
+
+This will:
+- Create the PostgreSQL container
+- Create the Docker network
+- Initialize the database using the provided SQL scripts
+- Make PostgreSQL available for the application
+
+---
+
+## Stopping the PostgreSQL Container
+
+To stop the database container and remove the associated volumes, run:
+
+```bash
+docker compose -f docker-compose.override.yml down -v
+```
+
+The `-v` flag removes the database volume, which resets the database state.
+
+---
 
 Seeded users (all with password `password123`):
 
