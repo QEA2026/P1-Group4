@@ -25,7 +25,7 @@ public class LoginPageSeleniumTest {
                 .sendKeys("testmanager");
 
         driver.findElement(By.id("password"))
-                .sendKeys("MyNewStrongPassword123!");
+                .sendKeys("newPassword123!");
 
         driver.findElement(By.xpath("//button[@type='submit']"))
                 .click();
@@ -122,10 +122,10 @@ public class LoginPageSeleniumTest {
 
             usernameInput.clear();
             passwordInput.clear();
-            passwordInput.sendKeys("MyNewStrongPassword123!");
+            passwordInput.sendKeys("newPassword123!");
 
 
-            assertEquals("MyNewStrongPassword123!", passwordInput.getAttribute("value"));
+            assertEquals("newPassword123!", passwordInput.getAttribute("value"));
 
             loginButton.click();
 

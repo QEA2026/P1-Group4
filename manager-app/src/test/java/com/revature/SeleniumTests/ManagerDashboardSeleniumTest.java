@@ -26,7 +26,7 @@ public class ManagerDashboardSeleniumTest {
                 .sendKeys("testmanager");
 
         driver.findElement(By.id("password"))
-                .sendKeys("MyNewStrongPassword123!");
+                .sendKeys("newPassword123!");
 
         driver.findElement(By.xpath("//button[@type='submit']"))
                 .click();

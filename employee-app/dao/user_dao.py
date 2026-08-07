@@ -15,7 +15,7 @@ def find_user_by_username(username):
     try:
         cur = conn.cursor()
        
-        cur.execute(" Select * from users WHERE username = ?", (username,))
+        cur.execute(" Select * from users WHERE username = %s", (username,))
         result = cur.fetchone()
         logger.info(f"Found user with username: {username}")
         return result
@@ -29,7 +29,7 @@ def find_user_by_id(user_id):
     conn = get_connection()
     try:
         cur = conn.cursor()
-        cur.execute("SELECT * FROM users WHERE id = ?", (user_id,))
+        cur.execute("SELECT * FROM users WHERE id = %s", (user_id,))
         result = cur.fetchone()
         logger.info(f"Found user with id: {user_id}")
         return result

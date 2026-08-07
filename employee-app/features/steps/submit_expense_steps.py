@@ -1,32 +1,80 @@
 from behave import given, when, then
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
 
 # Shared precondition — runs before each scenario
 @given('I am logged in as "{username}"')
 def step_logged_in(context, username):
-    # Go to login, authenticate, and land on the dashboard.
     context.driver.get(context.base_url + "/login")
+
     context.driver.find_element(By.ID, "username").send_keys(username)
     context.driver.find_element(By.ID, "password").send_keys("password123")
-    context.driver.find_element(By.CSS_SELECTOR, "#login-form button").click()
+    context.driver.find_element(
+        By.CSS_SELECTOR,
+        "#login-form button"
+    ).click()
+
+    wait = WebDriverWait(context.driver, 15)
+
+    # Wait until we've actually left the login page
+    wait.until(EC.url_contains("/app"))
+
+    # Wait until the dashboard has initialized
+    wait.until(
+        EC.text_to_be_present_in_element(
+            (By.ID, "username-display"),
+            username
+        )
+    )
+
+    # Wait until the navigation button is clickable
+    wait.until(
+        EC.element_to_be_clickable((By.ID, "show-submit"))
+    )
 
 
 @when('I submit an expense with amount "{amount}" and description "{description}"')
 def step_submit_expense(context, amount, description):
     context.driver.find_element(By.ID, "show-submit").click()
-    context.driver.find_element(By.ID, "amount").send_keys(amount)
-    context.driver.find_element(By.ID, "description").send_keys(description)
-    # category is optional, so it's left out here
-    context.driver.find_element(By.CSS_SELECTOR, "#expense-form button").click()
+    amount_box = WebDriverWait(context.driver, 10).until(
+        EC.visibility_of_element_located((By.ID, "amount"))
+    )
+    amount_box.send_keys(amount)
+    context.driver.find_element(
+        By.ID,
+        "description"
+    ).send_keys(description)
+    context.driver.find_element(
+        By.CSS_SELECTOR,
+        "#expense-form button[type='submit']"
+    ).click()
 
 
 @then('I should see the expense in my expense list')
-def step_see_expense_in_list(context, description="flight"):
-    # the submitted expense should now appear in the rendered table
-    context.driver.find_element(By.ID, "refresh-expenses").click()
-    table = context.driver.find_element(By.ID, "expenses-list")
-    assert "flight" in table.text, \
-        f"Expected the expense in the list, got: {table.text}"
+def step_see_expense_in_list(context):
+
+    refresh = WebDriverWait(context.driver, 15).until(
+        EC.element_to_be_clickable(
+            (By.ID, "refresh-expenses")
+        )
+    )
+
+    refresh.click()
+
+    WebDriverWait(context.driver, 15).until(
+        lambda driver: "flight" in driver.find_element(
+            By.ID,
+            "expenses-list"
+        ).text
+    )
+
+    table = context.driver.find_element(
+        By.ID,
+        "expenses-list"
+    )
+
+    assert "flight" in table.text
 
 @then('I should see a validation error on the amount field')
 def step_amount_validation(context):
@@ -40,9 +88,15 @@ def step_amount_validation(context):
 def step_submit_empty_description(context, amount):
     # reveal the form first, same as the valid-submit step
     context.driver.find_element(By.ID, "show-submit").click()
-    context.driver.find_element(By.ID, "amount").send_keys(amount)
+    amount_box = WebDriverWait(context.driver, 10).until(
+        EC.visibility_of_element_located((By.ID, "amount"))
+    )
+    amount_box.send_keys(amount)
     # leave description empty on purpose
-    context.driver.find_element(By.CSS_SELECTOR, "#expense-form button").click()
+    context.driver.find_element(
+        By.CSS_SELECTOR,
+        "#expense-form button[type='submit']"
+    ).click()
 
 # This is for when the browser blocks the empty fields
 @then('I should see a validation error on the description field')

@@ -1,16 +1,45 @@
 """
-Where the SQLite connection is created 
-so everythings imports from here 
-
+Database connection factory.
+Provides connections for either SQLite (local testing)
+or PostgreSQL (Docker/AWS deployment).
 """
-import sqlite3
+
 import os
+import sqlite3
+import psycopg2
 
-DB_PATH = os.path.join(os.path.dirname(__file__), '..', '..', 'database', 'expense_manager.db')
 
-# Handles the connection
+DB_TYPE = os.getenv("DB_TYPE", "postgres")
+
+
 def get_connection():
-    conn = sqlite3.connect(DB_PATH)
-    return conn
-    
-    
+
+    if DB_TYPE == "postgres":
+
+        DB_HOST = os.getenv("DB_HOST", "localhost")
+        DB_PORT = os.getenv("DB_PORT", "5432")
+        DB_NAME = os.getenv("DB_NAME", "expense_manager")
+        DB_USER = os.getenv("DB_USER", "postgres")
+        DB_PASSWORD = os.getenv("DB_PASSWORD", "newPostgresqlUser26")
+
+        conn = psycopg2.connect(
+            host=DB_HOST,
+            port=DB_PORT,
+            dbname=DB_NAME,
+            user=DB_USER,
+            password=DB_PASSWORD
+        )
+
+        print("CONNECTED TO POSTGRES:", conn.get_dsn_parameters())
+        return conn
+
+    else:
+        SQLITE_PATH = os.getenv(
+            "SQLITE_PATH",
+            "database/expense_manager.db"
+        )
+
+        conn = sqlite3.connect(SQLITE_PATH)
+
+        print("CONNECTED TO SQLITE:", SQLITE_PATH)
+        return conn
