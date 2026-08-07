@@ -37,7 +37,7 @@ public class GenerateReportsSteps {
 
         DriverManager.getDriver()
                 .findElement(By.id("password"))
-                .sendKeys("MyNewStrongPassword123!");
+                .sendKeys("newPassword123!");
 
 
         DriverManager.getDriver()

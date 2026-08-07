@@ -3,13 +3,13 @@ package com.revature.DAOs;
 import com.revature.exceptions.ResourceNotFoundException;
 import com.revature.models.Expense;
 
+import com.revature.utils.ConnectionUtil;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.io.TempDir;
+import org.mockito.MockedStatic;
 
-import java.nio.file.Path;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -19,6 +19,7 @@ import java.sql.Statement;
 import java.util.ArrayList;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.mockStatic;
 
 // Integration tests for ExpenseDAO: no mocking - each test runs the DAO's real SQL
 // against a real, disposable SQLite database file created fresh per test via @TempDir.
@@ -26,39 +27,44 @@ import static org.junit.jupiter.api.Assertions.*;
 @DisplayName("ExpenseDAO Integration Tests")
 class ExpenseDAOIT {
 
-    @TempDir
-    Path tempDir;
-
     private ExpenseDAO expenseDAO;
-    private String jdbcUrl;
+    private MockedStatic<ConnectionUtil> connectionUtilMock;
+    private static final String H2_URL = "jdbc:h2:mem:expensedb;DB_CLOSE_DELAY=-1";
 
     @BeforeEach
-    void setUp() throws SQLException, ClassNotFoundException {
-        Path dbFile = tempDir.resolve("test-expense-manager.db");
-        System.setProperty("expense.db.path", dbFile.toAbsolutePath().toString());
-        jdbcUrl = "jdbc:sqlite:" + dbFile.toAbsolutePath();
+    void setUp() throws SQLException {
+        connectionUtilMock = mockStatic(ConnectionUtil.class);
+        connectionUtilMock.when(ConnectionUtil::getConnection)
+                .thenAnswer(invocation ->
+                        DriverManager.getConnection(H2_URL));
 
-        Class.forName("org.sqlite.JDBC");
-        try (Connection conn = DriverManager.getConnection(jdbcUrl);
+        try (Connection conn = DriverManager.getConnection(H2_URL);
              Statement stmt = conn.createStatement()) {
+
+            stmt.execute("DROP TABLE IF EXISTS approvals");
+            stmt.execute("DROP TABLE IF EXISTS expenses");
+
             stmt.execute(
-                "CREATE TABLE expenses (" +
-                "    id INTEGER PRIMARY KEY AUTOINCREMENT," +
-                "    user_id INTEGER NOT NULL," +
-                "    amount REAL NOT NULL," +
-                "    description TEXT NOT NULL," +
-                "    date TEXT NOT NULL," +
-                "    category TEXT" +
-                ");");
+                    "CREATE TABLE expenses (" +
+                            "    id INT AUTO_INCREMENT PRIMARY KEY," +
+                            "    user_id INTEGER NOT NULL," +
+                            "    amount REAL NOT NULL," +
+                            "    description VARCHAR(255) NOT NULL," +
+                            "    \"date\" VARCHAR(255) NOT NULL," +
+                            "    category VARCHAR(255)" +
+                            ");"
+            );
+
             stmt.execute(
-                "CREATE TABLE approvals (" +
-                "    id INTEGER PRIMARY KEY AUTOINCREMENT," +
-                "    expense_id INTEGER NOT NULL," +
-                "    status TEXT NOT NULL," +
-                "    reviewer INTEGER," +
-                "    comment TEXT," +
-                "    review_date TEXT" +
-                ");");
+                    "CREATE TABLE approvals (" +
+                            "    id INT AUTO_INCREMENT PRIMARY KEY," +
+                            "    expense_id INTEGER NOT NULL," +
+                            "    status VARCHAR(255) NOT NULL," +
+                            "    reviewer INTEGER," +
+                            "    comment VARCHAR(255)," +
+                            "    review_date VARCHAR(255)" +
+                            ");"
+            );
         }
 
         expenseDAO = new ExpenseDAO();
@@ -66,19 +72,25 @@ class ExpenseDAOIT {
 
     @AfterEach
     void tearDown() {
-        System.clearProperty("expense.db.path");
+        if (connectionUtilMock != null) {
+            connectionUtilMock.close();
+        }
     }
 
     private int insertExpense(int userId, double amount, String description, String date, String category) throws SQLException {
-        String sql = "INSERT INTO expenses (user_id, amount, description, date, category) VALUES (?, ?, ?, ?, ?);";
-        try (Connection conn = DriverManager.getConnection(jdbcUrl);
+        String sql = "INSERT INTO expenses (user_id, amount, description, \"date\", category) VALUES (?, ?, ?, ?, ?);";
+
+        try (Connection conn = DriverManager.getConnection(H2_URL);
              PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+
             ps.setInt(1, userId);
             ps.setDouble(2, amount);
             ps.setString(3, description);
             ps.setString(4, date);
             ps.setString(5, category);
+
             ps.executeUpdate();
+
             try (ResultSet keys = ps.getGeneratedKeys()) {
                 keys.next();
                 return keys.getInt(1);
@@ -88,7 +100,7 @@ class ExpenseDAOIT {
 
     private void insertApproval(int expenseId, String status) throws SQLException {
         String sql = "INSERT INTO approvals (expense_id, status) VALUES (?, ?);";
-        try (Connection conn = DriverManager.getConnection(jdbcUrl);
+        try (Connection conn = DriverManager.getConnection(H2_URL);
              PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, expenseId);
             ps.setString(2, status);

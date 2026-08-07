@@ -110,7 +110,7 @@ public class ExpenseDAO implements ExpenseDAOInterface{
 
     @Override
     public ArrayList<Expense> getExpenseByDate(String date){
-        String sql = "Select * from expenses where date = ?;";
+        String sql = "Select * from expenses where \"date\" = ?;";
 
         try(Connection conn = ConnectionUtil.getConnection();
             PreparedStatement ps = conn.prepareStatement(sql)){
