@@ -19,7 +19,7 @@ WORKDIR /app
 COPY --from=build /opt/venv /opt/venv
 ENV PATH="/opt/venv/bin:$PATH"
 
-RUN useradd --create-home appuser
+RUN useradd --create-home appuser && chown appuser:appuser /app
 USER appuser
 
 COPY --chown=appuser:appuser . .

@@ -8,6 +8,9 @@ import os
 import sqlite3
 import psycopg2
 
+from logger import get_logger
+
+logger = get_logger(__name__)
 
 DB_TYPE = os.getenv("DB_TYPE", "postgres")
 
@@ -30,7 +33,7 @@ def get_connection():
             password=DB_PASSWORD
         )
 
-        print("CONNECTED TO POSTGRES:", conn.get_dsn_parameters())
+        logger.debug(f"Connected to Postgres: {conn.get_dsn_parameters()}")
         return conn
 
     else:
@@ -41,5 +44,5 @@ def get_connection():
 
         conn = sqlite3.connect(SQLITE_PATH)
 
-        print("CONNECTED TO SQLITE:", SQLITE_PATH)
+        logger.debug(f"Connected to SQLite: {SQLITE_PATH}")
         return conn
