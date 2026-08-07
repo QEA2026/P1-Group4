@@ -111,6 +111,15 @@ The web app **must be running in a separate terminal first** (`python app.py`), 
 cd employee-app
 source venv/bin/activate
 behave
+
+# if you want the behave/Allure bridge 
+pip install allure-behave 
+behave -f allure_behave.formatter:AllureFormatter -o allure-results features/ # run behave with Allure formatter, writing to its own dir
+allure serve allure-results-e2e # view the report
+
+# or, to build a static report instead of the temp server:                                                                                           
+allure generate allure-results -o allure-report --clean                                                                                              
+allure open allure-report
 ```
 
 Run a single feature:

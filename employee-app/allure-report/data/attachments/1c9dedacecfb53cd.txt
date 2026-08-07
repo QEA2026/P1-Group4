@@ -1,0 +1,1 @@
+[1m[31mERROR   [0m dao.user_dao:user_dao.py:23 Error finding the user: Database error

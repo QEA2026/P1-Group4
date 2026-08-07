@@ -11,22 +11,24 @@ from service.expense_service import (
 # ── submit_new_expense ─────────────────────────────
 
 # patch the DAO name where expense_service sees it, NOT dao.expense_dao
+# submit_new_expense(id,amount,description, category)
 @patch('service.expense_service.submit_new_expense_dao')
 def test_submit_happy_path(mock_submit):
     mock_submit.return_value = True
 
-    result = submit_new_expense(1, "150", "flight", "travel")
+    result = submit_new_expense(1, "150", "flight", "travel") # should convert the amount to a float
 
     assert result is True
     mock_submit.assert_called_once_with(1, "150", "flight", "travel")
 
 
+# sad path
 @patch('service.expense_service.submit_new_expense_dao')
 def test_submit_zero_amount_rejected(mock_submit):
     result = submit_new_expense(1, "0", "flight", "travel")
 
     assert result is False
-    mock_submit.assert_not_called()   # guard clause stopped before the DB
+    mock_submit.assert_not_called()   # guard clause stopped before it reached the DB
 
 
 @patch('service.expense_service.submit_new_expense_dao')
@@ -66,6 +68,7 @@ def test_submit_dao_failure_returns_false(mock_submit):
 
 # ── get_my_expenses (branch coverage) ──────────────
 
+# Happy Path
 @patch('service.expense_service.get_expense_by_status')
 @patch('service.expense_service.get_expenses_dao')
 def test_get_my_expenses_no_status(mock_get_all, mock_by_status):
@@ -137,7 +140,7 @@ def test_edit_non_numeric_amount_returns_none(mock_edit):
     mock_edit.assert_not_called()
 
 
-# ── delete_expense / get_expense_history (passthrough)
+# ── delete_expense / get_expense_history (just passed through)
 
 @patch('service.expense_service.delete_expense_dao')
 def test_delete_success(mock_delete):

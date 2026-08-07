@@ -12,7 +12,6 @@ from service.user_service import (
 )
 
 
-# The DB row shape find_user_by_username returns:
 #   (id, username, hashed_password, role)
 def fake_user(role="employee", pw_hash="hashed"):
     return (1, "vanessa", pw_hash, role)
