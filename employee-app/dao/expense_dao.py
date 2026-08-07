@@ -15,16 +15,22 @@ def submit_new_expense_dao(user_id, amount, description, category):
         cur = conn.cursor()
         date = str(datetime.date.today())
         # everytime you submit a new expense you also have to need it to get approved
-        cur.execute(" INSERT INTO expenses (user_id, amount, description, date, category) values (?,?,?,?,?)",
-                    (user_id, amount, description, date, category))
-        expense_id = cur.lastrowid
+        cur.execute("""
+            INSERT INTO expenses (user_id, amount, description, date, category)
+            VALUES (%s,%s,%s,%s,%s)
+            RETURNING id
+        """,
+        (user_id, amount, description, date, category))
 
-        cur.execute(" INSERT INTO approvals (expense_id, status) values (?,?)",
+        expense_id = cur.fetchone()[0]
+
+        cur.execute(" INSERT INTO approvals (expense_id, status) values (%s,%s)",
                     (expense_id, 'pending'))
 
         conn.commit()
         logger.info(f"Successfully added expense {expense_id} for user_id: {user_id}")
         return expense_id
+        
     except Exception as e:
         logger.error(f"Error submitting expense: {e}")
         return None
@@ -45,7 +51,7 @@ def get_expenses_dao(user_id):
                    expenses.category
             FROM expenses
             JOIN approvals ON approvals.expense_id = expenses.id
-            WHERE expenses.user_id = ?
+            WHERE expenses.user_id = %s
             ORDER BY expenses.date
         """, (user_id,))
         
@@ -70,8 +76,8 @@ def get_expense_by_status(user_id, status):
                    expenses.category
             FROM expenses
             JOIN approvals ON approvals.expense_id = expenses.id
-            WHERE expenses.user_id = ?
-            AND approvals.status = ?
+            WHERE expenses.user_id = %s
+            AND approvals.status = %s
             ORDER BY expenses.date
         """, (user_id,status))
         
@@ -97,7 +103,7 @@ def get_expense_history_dao(user_id):
                    expenses.category
             FROM expenses
             JOIN approvals ON approvals.expense_id = expenses.id
-            WHERE expenses.user_id = ?
+            WHERE expenses.user_id = %s
             AND approvals.status IN ('approved', 'denied')
             ORDER BY expenses.date
         """, (user_id,))
@@ -123,8 +129,8 @@ def edit_expense_dao(expense_id, user_id, new_amount, new_description):
             SELECT approvals.status
             FROM approvals
             JOIN expenses ON approvals.expense_id = expenses.id
-            WHERE expenses.id = ?
-            AND expenses.user_id = ?
+            WHERE expenses.id = %s
+            AND expenses.user_id = %s
         """, (expense_id, user_id))
         
         result = cur.fetchone()
@@ -141,9 +147,9 @@ def edit_expense_dao(expense_id, user_id, new_amount, new_description):
         # Run the update
         cur.execute("""
             UPDATE expenses
-            SET amount = ?, description = ?
-            WHERE id = ?
-            AND user_id = ?
+            SET amount = %s, description = %s
+            WHERE id = %s
+            AND user_id = %s
         """, (new_amount, new_description, expense_id, user_id))
         
         conn.commit()
@@ -166,8 +172,8 @@ def delete_expense_dao(user_id, expense_id):
             SELECT approvals.status
             FROM approvals
             JOIN expenses ON approvals.expense_id = expenses.id
-            WHERE expenses.id = ?
-            AND expenses.user_id = ?
+            WHERE expenses.id = %s
+            AND expenses.user_id = %s
         """, (expense_id, user_id))
         
         result = cur.fetchone()
@@ -181,10 +187,10 @@ def delete_expense_dao(user_id, expense_id):
             return False
         
         # Delete the approval record first (dependent table)
-        cur.execute("DELETE from approvals WHERE expense_id = ?", (expense_id,))
+        cur.execute("DELETE from approvals WHERE expense_id = %s", (expense_id,))
         
         # Then the expense itself
-        cur.execute("DELETE FROM expenses WHERE user_id = ? AND id = ?", (user_id, expense_id))
+        cur.execute("DELETE FROM expenses WHERE user_id = %s AND id = %s", (user_id, expense_id))
         
         conn.commit()
         logger.info(f"Deleted expense {expense_id}")

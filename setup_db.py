@@ -1,16 +1,26 @@
 
-import sqlite3
+import psycopg2
 import bcrypt
+import os
 
-conn = sqlite3.connect("database/expense_manager.db")
+conn = psycopg2.connect(
+    host=os.getenv("DB_HOST", "localhost"),
+    port=os.getenv("DB_PORT", "5432"),
+    dbname=os.getenv("DB_NAME", "expense_manager"),
+    user=os.getenv("DB_USER", "postgres"),
+    password=os.getenv("DB_PASSWORD", "newPostgresqlUser26")
+)
 
 cursor = conn.cursor()
-cursor.execute("PRAGMA foreign_keys = ON")
+
+cursor.execute("DROP TABLE IF EXISTS approvals CASCADE")
+cursor.execute("DROP TABLE IF EXISTS expenses CASCADE")
+cursor.execute("DROP TABLE IF EXISTS users CASCADE")
 
 # users table: stores everyone that can log into the app
 cursor.execute("""
                CREATE TABLE IF NOT EXISTS users (
-                   id INTEGER PRIMARY KEY AUTOINCREMENT, 
+                   id SERIAL PRIMARY KEY, 
                    username TEXT NOT NULL UNIQUE,
                    password TEXT NOT NULL,
                    role TEXT NOT NULL
@@ -20,21 +30,22 @@ cursor.execute("""
 # expenses table: stores every expense an employee submits 
 cursor.execute("""
                CREATE TABLE IF NOT EXISTS expenses (
-                   id INTEGER PRIMARY KEY AUTOINCREMENT, 
+                   id SERIAL PRIMARY KEY, 
                    user_id INTEGER NOT NULL,
                    amount REAL NOT NULL,
                    description TEXT NOT NULL,
                    date TEXT NOT NULL,
                    category TEXT,
                    
-                   FOREIGN KEY (user_id) REFERENCES users(id) 
+                   FOREIGN KEY (user_id) REFERENCES users(id)
+                   ON DELETE CASCADE 
                    )
             """)
 
 # approvals table: The status tracker for each expense (everything is pending first then its approved or denied)
 cursor.execute("""
                CREATE TABLE IF NOT EXISTS approvals (
-                   id INTEGER PRIMARY KEY AUTOINCREMENT, 
+                   id SERIAL PRIMARY KEY, 
                    expense_id INTEGER NOT NULL,
                    status TEXT NOT NULL,
                    reviewer INTEGER,
@@ -42,20 +53,27 @@ cursor.execute("""
                    review_date TEXT,
                    
                    FOREIGN KEY (expense_id) REFERENCES expenses(id)
+                   ON DELETE CASCADE
                    )
             """)
 
 
 # Hash passwords with bcrypt
+testmanager_password = bcrypt.hashpw("newPassword123!".encode(), bcrypt.gensalt()).decode()
+manager_password = bcrypt.hashpw("password123".encode(),bcrypt.gensalt()).decode()
 marco_password = bcrypt.hashpw("password123".encode(), bcrypt.gensalt()).decode()
 bob_password = bcrypt.hashpw("password123".encode(), bcrypt.gensalt()).decode()
 vanessa_password = bcrypt.hashpw("password123".encode(), bcrypt.gensalt()).decode()
 
 cursor.execute("""
-    INSERT OR IGNORE INTO users (username, password, role) VALUES (?, ?, ?), (?, ?, ?), (?, ?, ?)
+    INSERT INTO users (username, password, role) 
+    VALUES (%s, %s, %s),(%s, %s, %s), (%s, %s, %s), (%s, %s, %s), (%s, %s, %s)
+    ON CONFLICT (username) DO NOTHING
 """, ('marco', marco_password, 'employee',
       'bob', bob_password, 'employee',
-      'vanessa', vanessa_password, 'manager'))
+      'vanessa', vanessa_password, 'manager',
+      'testmanager',testmanager_password,'manager',
+      'manager', manager_password,'manager'))
 
 ## TEST DATA
 cursor.execute("""
@@ -168,6 +186,15 @@ cursor.execute("""
                    'pending', NULL, NULL, NULL
                )
 """)
+
+cursor.execute("""
+SELECT table_schema, table_name
+FROM information_schema.tables
+WHERE table_schema NOT IN ('pg_catalog', 'information_schema');
+""")
+
+print("TABLES CREATED:")
+print(cursor.fetchall())
 
 conn.commit()
 conn.close()

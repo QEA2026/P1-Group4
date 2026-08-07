@@ -6,9 +6,17 @@ services:
     container_name: manager-app
     ports:
       - "8080:8080"
-    volumes:
-      # matches -Dexpense.db.path in manager-app/Dockerfile
-      - ./database:/app/database
+    environment:
+      DB_HOST: ${DB_HOST}
+      DB_PORT: ${DB_PORT}
+      DB_NAME: ${DB_NAME}
+      DB_USER: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
+    networks:
+      - expense-network
+    depends_on:
+      postgres:
+        condition: service_healthy
     restart: unless-stopped
 
   employee-app:
@@ -17,8 +25,19 @@ services:
     container_name: employee-app
     ports:
       - "5001:5001"
-    volumes:
-      # db/connection.py resolves ../../database relative to WORKDIR /app,
-      # which lands at /database in the container
-      - ./database:/database
+    environment:
+      DB_TYPE: postgres
+      DB_HOST: ${DB_HOST}
+      DB_PORT: ${DB_PORT}
+      DB_NAME: ${DB_NAME}
+      DB_USER: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
+    networks:
+      - expense-network
+    depends_on:
+      postgres:
+        condition: service_healthy
     restart: unless-stopped
+
+networks:
+  expense-network:

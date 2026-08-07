@@ -18,6 +18,6 @@ COPY --from=build /build/target/manager-app.jar ./app.jar
 
 EXPOSE 8080
 
-# overrides ConnectionUtil's default CWD-relative db lookup;
-# docker-compose mounts the real db at this path
-ENTRYPOINT ["java", "-Dexpense.db.path=/app/database/expense_manager.db", "-jar", "app.jar"]
+# DB_HOST/PORT/NAME/USER/PASSWORD (Postgres) come from docker-compose's
+# environment; expense.db.path is only ever set by tests, not here
+ENTRYPOINT ["java", "-jar", "app.jar"]

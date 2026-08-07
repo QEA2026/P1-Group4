@@ -31,7 +31,7 @@ def test_find_user_by_username_returns_user(mocker):
     mock_connection.cursor.assert_called_once()
 
     mock_cursor.execute.assert_called_once_with(
-        " Select * from users WHERE username = ?",
+        " Select * from users WHERE username = %s",
         ("testname",)
     )
 
@@ -56,7 +56,7 @@ def test_find_user_by_username_returns_none_when_user_doesnt_exist(mocker):
     assert result is None
 
     mock_cursor.execute.assert_called_once_with(
-        " Select * from users WHERE username = ?",
+        " Select * from users WHERE username = %s",
         ("unknown",)
     )
 
@@ -81,7 +81,7 @@ def test_find_user_by_username_returns_none_when_database_error_occurs(mocker):
     assert result is None
 
     mock_cursor.execute.assert_called_once_with(
-        " Select * from users WHERE username = ?",
+        " Select * from users WHERE username = %s",
         ("testname",)
     )
 
@@ -120,7 +120,7 @@ def test_find_user_by_id_returns_user(mocker):
     mock_connection.cursor.assert_called_once()
 
     mock_cursor.execute.assert_called_once_with(
-        "SELECT * FROM users WHERE id = ?",
+        "SELECT * FROM users WHERE id = %s",
         (1,)
     )
 
@@ -145,7 +145,7 @@ def test_find_user_by_id_returns_none_when_user_doesnt_exist(mocker):
     assert result is None
 
     mock_cursor.execute.assert_called_once_with(
-        "SELECT * FROM users WHERE id = ?",
+        "SELECT * FROM users WHERE id = %s",
         (999,)
     )
 
@@ -173,7 +173,7 @@ def test_find_user_by_id_returns_none_when_database_error_occurs(mocker):
     assert result is None
 
     mock_cursor.execute.assert_called_once_with(
-        "SELECT * FROM users WHERE id = ?",
+        "SELECT * FROM users WHERE id = %s",
         (1,)
     )
 
