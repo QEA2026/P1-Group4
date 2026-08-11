@@ -24,6 +24,9 @@ def get_connection():
         DB_NAME = os.getenv("DB_NAME", "expense_manager")
         DB_USER = os.getenv("DB_USER", "postgres")
         DB_PASSWORD = os.getenv("DB_PASSWORD", "newPostgresqlUser26")
+        # RDS requires SSL, but the local docker-compose postgres isn't built with it.
+        # Defaults to "require" so AWS keeps working; compose sets DB_SSLMODE=disable.
+        DB_SSLMODE = os.getenv("DB_SSLMODE", "require")
 
         conn = psycopg2.connect(
             host=DB_HOST,
@@ -31,7 +34,7 @@ def get_connection():
             dbname=DB_NAME,
             user=DB_USER,
             password=DB_PASSWORD,
-            sslmode="require"
+            sslmode=DB_SSLMODE
         )
 
         logger.debug(f"Connected to Postgres: {conn.get_dsn_parameters()}")

@@ -37,7 +37,7 @@ def employee_page():
     return app.send_static_file("employee.html")
 
 
-# turns the (id, amount, description, date, status, category) tuples into dicts for JSON
+# turns the (id, amount, description, date, status, category, comment) tuples into dicts for JSON
 def expense_to_dict(row):
     return {
         "id": row[0],
@@ -46,6 +46,7 @@ def expense_to_dict(row):
         "date": row[3],
         "status": row[4],
         "category": row[5],
+        "comment": row[6],
     }
 
 

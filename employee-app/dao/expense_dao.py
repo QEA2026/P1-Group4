@@ -43,12 +43,13 @@ def get_expenses_dao(user_id):
     try:
         cur = conn.cursor()
         cur.execute("""
-            SELECT expenses.id, 
-                   expenses.amount, 
-                   expenses.description, 
-                   expenses.date, 
+            SELECT expenses.id,
+                   expenses.amount,
+                   expenses.description,
+                   expenses.date,
                    approvals.status,
-                   expenses.category
+                   expenses.category,
+                   approvals.comment
             FROM expenses
             JOIN approvals ON approvals.expense_id = expenses.id
             WHERE expenses.user_id = %s
@@ -68,12 +69,13 @@ def get_expense_by_status(user_id, status):
     try:
         cur = conn.cursor()
         cur.execute("""
-            SELECT expenses.id, 
-                   expenses.amount, 
-                   expenses.description, 
-                   expenses.date, 
+            SELECT expenses.id,
+                   expenses.amount,
+                   expenses.description,
+                   expenses.date,
                    approvals.status,
-                   expenses.category
+                   expenses.category,
+                   approvals.comment
             FROM expenses
             JOIN approvals ON approvals.expense_id = expenses.id
             WHERE expenses.user_id = %s
@@ -95,12 +97,13 @@ def get_expense_history_dao(user_id):
     try:
         cur = conn.cursor()
         cur.execute("""
-            SELECT expenses.id, 
-                   expenses.amount, 
-                   expenses.description, 
+            SELECT expenses.id,
+                   expenses.amount,
+                   expenses.description,
                    expenses.date,
                    approvals.status,
-                   expenses.category
+                   expenses.category,
+                   approvals.comment
             FROM expenses
             JOIN approvals ON approvals.expense_id = expenses.id
             WHERE expenses.user_id = %s

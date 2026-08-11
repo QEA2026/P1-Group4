@@ -109,7 +109,8 @@ def test_get_expenses_returns_expenses(mocker):
             "Plane tickets",
             "2026-07-23",
             "approved",
-            "Travel"
+            "Travel",
+            "Approved for client travel"
         ),
         (
             1,
@@ -117,7 +118,8 @@ def test_get_expenses_returns_expenses(mocker):
             "Lunch",
             "2026-07-24",
             "pending",
-            "Food"
+            "Food",
+            None
         )
     ]
 
@@ -137,12 +139,13 @@ def test_get_expenses_returns_expenses(mocker):
 
     mock_cursor.execute.assert_called_once_with(
         """
-            SELECT expenses.id, 
-                   expenses.amount, 
-                   expenses.description, 
-                   expenses.date, 
+            SELECT expenses.id,
+                   expenses.amount,
+                   expenses.description,
+                   expenses.date,
                    approvals.status,
-                   expenses.category
+                   expenses.category,
+                   approvals.comment
             FROM expenses
             JOIN approvals ON approvals.expense_id = expenses.id
             WHERE expenses.user_id = %s
@@ -208,7 +211,8 @@ def test_get_expense_by_status_returns_matching_expenses(mocker):
             "Lunch",
             "2026-07-24",
             "pending",
-            "Food"
+            "Food",
+            None
         )
     ]
 
@@ -226,12 +230,13 @@ def test_get_expense_by_status_returns_matching_expenses(mocker):
 
     mock_cursor.execute.assert_called_once_with(
         """
-            SELECT expenses.id, 
-                   expenses.amount, 
-                   expenses.description, 
-                   expenses.date, 
+            SELECT expenses.id,
+                   expenses.amount,
+                   expenses.description,
+                   expenses.date,
                    approvals.status,
-                   expenses.category
+                   expenses.category,
+                   approvals.comment
             FROM expenses
             JOIN approvals ON approvals.expense_id = expenses.id
             WHERE expenses.user_id = %s
@@ -303,7 +308,8 @@ def test_get_expense_history_returns_completed_expenses(mocker):
             "Plane tickets",
             "2026-07-23",
             "approved",
-            "Travel"
+            "Travel",
+            "Approved for client travel"
         ),
         (
             3,
@@ -311,7 +317,8 @@ def test_get_expense_history_returns_completed_expenses(mocker):
             "Uber",
             "2026-07-24",
             "denied",
-            "Transportation"
+            "Transportation",
+            "Please use company shuttle"
         )
     ]
 
@@ -329,12 +336,13 @@ def test_get_expense_history_returns_completed_expenses(mocker):
 
     mock_cursor.execute.assert_called_once_with(
         """
-            SELECT expenses.id, 
-                   expenses.amount, 
-                   expenses.description, 
+            SELECT expenses.id,
+                   expenses.amount,
+                   expenses.description,
                    expenses.date,
                    approvals.status,
-                   expenses.category
+                   expenses.category,
+                   approvals.comment
             FROM expenses
             JOIN approvals ON approvals.expense_id = expenses.id
             WHERE expenses.user_id = %s
