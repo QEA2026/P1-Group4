@@ -13,7 +13,10 @@ public class Main {
         AuthController authController = new AuthController();
         ExpenseController expenseController = new ExpenseController();
         ApprovalController approvalController = new ApprovalController();
-
+	String frontendHost = System.getenv().getOrDefault(
+        	"FRONTEND_HOST",
+        	"http://localhost:5500"
+	);
         return Javalin.create(config -> {
             config.bundledPlugins.enableCors(cors -> {
                 cors.addRule(rule -> {
@@ -22,7 +25,7 @@ public class Main {
                             "http://localhost:5500",
                             "http://127.0.0.1:5501",
                             "http://localhost:5501",
-                            "http://18.188.107.94:5500"
+                            frontendHost
                     );
                 });
             });
