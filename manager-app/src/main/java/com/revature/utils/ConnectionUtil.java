@@ -26,6 +26,13 @@ public class ConnectionUtil {
     private static final String PASSWORD =
             System.getenv().getOrDefault("DB_PASSWORD", "newPostgresqlUser26");
 
+    /*
+     * RDS requires SSL, but the local docker-compose postgres has no SSL support.
+     * Defaults to "require" so AWS keeps working; compose sets DB_SSLMODE=disable.
+     */
+    private static final String SSLMODE =
+            System.getenv().getOrDefault("DB_SSLMODE", "require");
+
 
     public static Connection getConnection() throws SQLException {
 
@@ -59,10 +66,11 @@ public class ConnectionUtil {
 
 
         String url = String.format(
-                "jdbc:postgresql://%s:%s/%s?sslmode=require",
+                "jdbc:postgresql://%s:%s/%s?sslmode=%s",
                 HOST,
                 PORT,
-                DATABASE
+                DATABASE,
+                SSLMODE
         );
 
 

@@ -8,7 +8,7 @@ services:
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     ports:
-      - "5433:5432"
+      - "5434:5432"
     volumes:
       - ./database/init.sql:/docker-entrypoint-initdb.d/init.sql
       - pgdata:/var/lib/postgresql
@@ -19,6 +19,15 @@ services:
       interval: 5s
       timeout: 5s
       retries: 5
+
+  employee-app:
+    environment:
+      # the local postgres image has no SSL, unlike RDS
+      DB_SSLMODE: disable
+
+  manager-app:
+    environment:
+      DB_SSLMODE: disable
 
 
 networks:
