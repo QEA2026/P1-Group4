@@ -134,6 +134,9 @@ The application uses:
 * **Manager API:** Port `8080`
 * **PostgreSQL:** AWS RDS
 
+⚠️ Reminder that the manager fornt end must be ran seperately in another termianl. SSH into a separate termianl and run this from the manager-app folder:
+python3 -m http.server 5500 --directory src/main/resources --bind 0.0.0.0
+
 The Docker PostgreSQL container is used for the local/containerized demonstration environment. The EC2 deployment connects the applications to the AWS RDS PostgreSQL database.
 
 ---
