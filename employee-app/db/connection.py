@@ -30,7 +30,8 @@ def get_connection():
             port=DB_PORT,
             dbname=DB_NAME,
             user=DB_USER,
-            password=DB_PASSWORD
+            password=DB_PASSWORD,
+            sslmode="require"
         )
 
         logger.debug(f"Connected to Postgres: {conn.get_dsn_parameters()}")

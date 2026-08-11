@@ -238,4 +238,4 @@ out/
 .metals/
 .bloop/
 .allure-results/
-.allure-report/
+.allure-report/expense_manager.dump

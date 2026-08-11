@@ -59,7 +59,7 @@ public class ConnectionUtil {
 
 
         String url = String.format(
-                "jdbc:postgresql://%s:%s/%s",
+                "jdbc:postgresql://%s:%s/%s?sslmode=require",
                 HOST,
                 PORT,
                 DATABASE
