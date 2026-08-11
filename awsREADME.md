@@ -1,5 +1,14 @@
 ## AWS EC2 Project Access & Startup
 
+#### EC2 Instance
+
+###Current Public IP:
+18.188.107.94
+
+⚠️ The public IP may change if the EC2 instance is stopped and started again. 
+Check the EC2 console for the current Public IPv4 address before connecting.
+
+
 ### 1. Generate an SSH Key Pair
 
 Each teammate should create their **own SSH key pair** on their computer.
