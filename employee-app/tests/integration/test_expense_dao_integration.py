@@ -20,7 +20,8 @@ def test_get_expense_by_status_returns_pending_expenses(temp_database):
             "Lunch",
             "2026-07-24",
             "pending",
-            "Food"
+            "Food",
+            None
         )
     ]
 
@@ -36,7 +37,8 @@ def test_get_expense_by_status_returns_approved_expenses(temp_database):
             "Plane tickets",
             "2026-07-23",
             "approved",
-            "Travel"
+            "Travel",
+            "Approved for business travel"
         )
     ]
 
@@ -52,7 +54,8 @@ def test_get_expense_by_status_returns_denied_expenses(temp_database):
             "Uber",
             "2026-07-24",
             "denied",
-            "transportation"
+            "transportation",
+            "Transportation was not eligible"
         )
     ]
 
@@ -119,7 +122,8 @@ def test_get_expenses_returns_all_expenses_for_user(temp_database):
             "Plane tickets",
             "2026-07-23",
             "approved",
-            "Travel"
+            "Travel",
+            "Approved for business travel"
         ),
         (
             1,
@@ -127,7 +131,8 @@ def test_get_expenses_returns_all_expenses_for_user(temp_database):
             "Lunch",
             "2026-07-24",
             "pending",
-            "Food"
+            "Food",
+            None
         )
     ]
 
@@ -149,11 +154,12 @@ def test_get_expense_history_returns_approved_expenses(temp_database):
             "Plane tickets",
             "2026-07-23",
             "approved",
-            "Travel"
+            "Travel",
+            "Approved for business travel"
         )
     ]
 
-# Test get expense history by user id / test denied expense 
+# Test get expense history by user id / test denied expense
 def test_get_expense_history_returns_denied_expenses(temp_database):
 
     result = get_expense_history_dao(2)
@@ -165,7 +171,8 @@ def test_get_expense_history_returns_denied_expenses(temp_database):
             "Uber",
             "2026-07-24",
             "denied",
-            "transportation"
+            "transportation",
+            "Transportation was not eligible"
         )
     ]
 
@@ -206,7 +213,8 @@ def test_edit_expense_updates_pending_expense(temp_database):
         "Team lunch",
         "2026-07-24",
         "pending",
-        "Food"
+        "Food",
+        None
     )
 
 
