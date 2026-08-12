@@ -20,15 +20,24 @@ services:
       timeout: 5s
       retries: 5
 
-  employee-app:
-    environment:
-      # the local postgres image has no SSL, unlike RDS
-      DB_SSLMODE: disable
-
   manager-app:
     environment:
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_NAME: ${POSTGRES_DB}
+      DB_USER: ${POSTGRES_USER}
+      DB_PASSWORD: ${POSTGRES_PASSWORD}
       DB_SSLMODE: disable
 
+  employee-app:
+    environment:
+      DB_TYPE: postgres
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_NAME: ${POSTGRES_DB}
+      DB_USER: ${POSTGRES_USER}
+      DB_PASSWORD: ${POSTGRES_PASSWORD}
+      DB_SSLMODE: disable
 
 networks:
   expense-network:
