@@ -8,6 +8,7 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
+import org.openqa.selenium.chrome.ChromeOptions;
 
 import java.time.Duration;
 import java.sql.Connection;
@@ -16,7 +17,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class ManagerDashboardSeleniumTest {
     private WebDriver driver;
@@ -56,7 +56,15 @@ public class ManagerDashboardSeleniumTest {
             }
 
             //Does successful login to access manager app
-            driver = new ChromeDriver();
+            ChromeOptions options = new ChromeOptions();
+
+            options.addArguments("--headless=new");
+            options.addArguments("--no-sandbox");
+            options.addArguments("--disable-dev-shm-usage");
+            options.addArguments("--window-size=1920,1080");
+
+            driver = new ChromeDriver(options);
+
             wait = new WebDriverWait(driver, Duration.ofSeconds(5));
             loginAsManager();
         }

@@ -13,8 +13,13 @@ public class DriverManager {
 
             ChromeOptions options = new ChromeOptions();
 
+            options.addArguments("--headless=new");
+            options.addArguments("--no-sandbox");
+            options.addArguments("--disable-dev-shm-usage");
+            options.addArguments("--window-size=1920,1080");
+
             options.addArguments(
-                    "--user-data-dir=C:/selenium/chrome-test-profile-"
+                    "--user-data-dir=/tmp/chrome-test-profile-"
                             + System.currentTimeMillis()
             );
 
@@ -31,7 +36,6 @@ public class DriverManager {
             );
 
             driver = new ChromeDriver(options);
-            driver.manage().window().maximize();
         }
     }
 
