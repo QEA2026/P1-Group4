@@ -20,14 +20,16 @@ services:
       timeout: 5s
       retries: 5
 
+  # local .env sets DB_SSLMODE=disable (local postgres has no SSL);
+  # EC2's .env sets it to require (RDS enforces SSL). Was previously
+  # hardcoded to "disable" here, which broke every EC2 deploy.
   employee-app:
     environment:
-      # the local postgres image has no SSL, unlike RDS
-      DB_SSLMODE: disable
+      DB_SSLMODE: ${DB_SSLMODE}
 
   manager-app:
     environment:
-      DB_SSLMODE: disable
+      DB_SSLMODE: ${DB_SSLMODE}
 
 
 networks:
