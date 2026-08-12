@@ -6,13 +6,14 @@ pipeline {
     }
 
     environment {
-        // Linux tools are installed on PATH
         PYTHON = '/usr/bin/python3.11'
         MAVEN = '/usr/bin/mvn'
         DOCKER = '/usr/bin/docker'
         NEWMAN = '/usr/bin/newman'
 
-        // Selenium tests use localhost:5500 on this Jenkins host
+        JAVA_HOME = '/usr/lib/jvm/java-21-amazon-corretto.x86_64'
+        PATH+JAVA = "${JAVA_HOME}/bin"
+
         FRONTEND_HOST = 'http://localhost:5500'
     }
 
