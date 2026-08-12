@@ -1,6 +1,6 @@
 package com.revature.SeleniumTests;
 
-import com.revature.DAOs.ExpenseDAO;
+import com.revature.utils.ConnectionUtil;
 import org.junit.jupiter.api.*;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
@@ -10,6 +10,10 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.time.Duration;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -36,10 +40,21 @@ public class ManagerDashboardSeleniumTest {
 
     @Nested
     class ManagerPageTests {
-        ExpenseDAO dao = new ExpenseDAO();
+        private static final double SEEDED_AMOUNT = 82.19;
+        private static final String SEEDED_CATEGORY = "meals";
+        private static final String SEEDED_DATE = "2026-06-03";
+        private Integer seededExpenseId;
+        private int seededEmployeeId;
+        private String seededDescription;
 
         @BeforeEach
-        void setUp() {
+        void setUp(TestInfo testInfo) throws SQLException {
+            if (testInfo.getTestMethod()
+                    .map(method -> method.getName().startsWith("managerDashboard_reviewExpense_"))
+                    .orElse(false)) {
+                seedPendingExpense();
+            }
+
             //Does successful login to access manager app
             driver = new ChromeDriver();
             wait = new WebDriverWait(driver, Duration.ofSeconds(5));
@@ -47,11 +62,99 @@ public class ManagerDashboardSeleniumTest {
         }
 
         @AfterEach
-        void teardown() {
-            if (driver != null) {
-                driver.quit();
+        void teardown() throws SQLException {
+            try {
+                if (driver != null) {
+                    driver.quit();
+                }
+            } finally {
+                deleteSeededExpense();
             }
-            dao.resetExpenseStatuses();
+        }
+
+        private void seedPendingExpense() throws SQLException {
+            try (Connection conn = ConnectionUtil.getConnection()) {
+                conn.setAutoCommit(false);
+                try {
+                    try (PreparedStatement employee = conn.prepareStatement(
+                            "SELECT id FROM users WHERE LOWER(role) = 'employee' ORDER BY id LIMIT 1");
+                         ResultSet result = employee.executeQuery()) {
+                        if (!result.next()) {
+                            throw new SQLException("No employee exists for the Selenium test expense");
+                        }
+                        seededEmployeeId = result.getInt("id");
+                    }
+
+                    try (PreparedStatement expense = conn.prepareStatement(
+                            "INSERT INTO expenses (user_id, amount, description, date, category) " +
+                                    "VALUES (?, ?, ?, ?, ?) RETURNING id")) {
+                        expense.setInt(1, seededEmployeeId);
+                        expense.setDouble(2, SEEDED_AMOUNT);
+                        expense.setString(3, "Selenium dashboard test expense");
+                        expense.setString(4, SEEDED_DATE);
+                        expense.setString(5, SEEDED_CATEGORY);
+                        try (ResultSet result = expense.executeQuery()) {
+                            result.next();
+                            seededExpenseId = result.getInt("id");
+                        }
+                    }
+
+                    seededDescription = "Selenium dashboard test expense " + seededExpenseId;
+                    try (PreparedStatement description = conn.prepareStatement(
+                            "UPDATE expenses SET description = ? WHERE id = ?")) {
+                        description.setString(1, seededDescription);
+                        description.setInt(2, seededExpenseId);
+                        description.executeUpdate();
+                    }
+
+                    try (PreparedStatement approval = conn.prepareStatement(
+                            "INSERT INTO approvals (expense_id, status, reviewer, comment) " +
+                                    "VALUES (?, 'pending', NULL, NULL)")) {
+                        approval.setInt(1, seededExpenseId);
+                        approval.executeUpdate();
+                    }
+                    conn.commit();
+                } catch (SQLException e) {
+                    conn.rollback();
+                    seededExpenseId = null;
+                    throw e;
+                }
+            }
+        }
+
+        private void deleteSeededExpense() throws SQLException {
+            if (seededExpenseId == null) {
+                return;
+            }
+
+            try (Connection conn = ConnectionUtil.getConnection()) {
+                conn.setAutoCommit(false);
+                try (PreparedStatement approval = conn.prepareStatement(
+                             "DELETE FROM approvals WHERE expense_id = ?");
+                     PreparedStatement expense = conn.prepareStatement(
+                             "DELETE FROM expenses WHERE id = ?")) {
+                    approval.setInt(1, seededExpenseId);
+                    approval.executeUpdate();
+                    expense.setInt(1, seededExpenseId);
+                    expense.executeUpdate();
+                    conn.commit();
+                } catch (SQLException e) {
+                    conn.rollback();
+                    throw e;
+                }
+            } finally {
+                seededExpenseId = null;
+            }
+        }
+
+        private String seededExpenseRowXpath() {
+            return "//tr[" +
+                    "td[text()='" + seededEmployeeId + "'] and " +
+                    "td[text()='" + SEEDED_DATE + "'] and " +
+                    "td[text()='$" + String.format("%.2f", SEEDED_AMOUNT) + "'] and " +
+                    "td[text()='" + SEEDED_CATEGORY + "'] and " +
+                    "td[text()='" + seededDescription + "']" +
+                    "]";
         }
 
         @Test
@@ -98,14 +201,7 @@ public class ManagerDashboardSeleniumTest {
         @DisplayName("Review expense then go back to dashboard")
         void managerDashboard_reviewExpense_navigateBackToDashboard() {
             WebElement reviewBtn = wait.until(ExpectedConditions.elementToBeClickable(
-                    By.xpath("//tr[" +
-                            "td[text()='1'] and " +
-                            "td[text()='2026-06-03'] and " +
-                            "td[text()='$82.19'] and " +
-                            "td[text()='meals'] and " +
-                            "td[text()='Team lunch during sprint planning'] " +
-                            "]//button[text()='Review']"
-                    )));
+                    By.xpath(seededExpenseRowXpath() + "//button[text()='Review']")));
             reviewBtn.click();
             wait.until(ExpectedConditions.textToBePresentInElementLocated(
                     By.xpath("//div[@id='review-modal']//h3"),
@@ -127,15 +223,8 @@ public class ManagerDashboardSeleniumTest {
         @DisplayName("Review Expense, and approve it")
         void managerDashboard_reviewExpense_approveIt(){
             // find the expense review button based on the entire expense
-            WebElement reviewBtn = driver.findElement(By.xpath(
-                    "//tr[" +
-                            "td[text()='1'] and " +
-                            "td[text()='2026-06-03'] and " +
-                            "td[text()='$82.19'] and " +
-                            "td[text()='meals'] and " +
-                            "td[text()='Team lunch during sprint planning'] " +
-                            "]//button[text()='Review']"
-            ));
+            WebElement reviewBtn = wait.until(ExpectedConditions.elementToBeClickable(
+                    By.xpath(seededExpenseRowXpath() + "//button[text()='Review']")));
             reviewBtn.click();
             wait.until(ExpectedConditions.textToBePresentInElementLocated(
                     By.xpath("//div[@id='review-modal']//h3"),
@@ -165,15 +254,7 @@ public class ManagerDashboardSeleniumTest {
                     "Title should be: " + driver.getTitle());
 
             wait.until(ExpectedConditions.invisibilityOfElementLocated(
-                    By.xpath(
-                            "//tr[" +
-                                    "td[text()='1'] and " +
-                                    "td[text()='2026-06-03'] and " +
-                                    "td[text()='$82.19'] and " +
-                                    "td[text()='meals'] and " +
-                                    "td[text()='Team lunch during sprint planning']" +
-                                    "]"
-                    )
+                    By.xpath(seededExpenseRowXpath())
             ));
         }
 
@@ -182,15 +263,8 @@ public class ManagerDashboardSeleniumTest {
         @DisplayName("Review Expense, and deny it")
         void managerDashboard_reviewExpense_denyIt(){
             // find the expense review button based on the entire expense
-            WebElement reviewBtn = driver.findElement(By.xpath(
-                    "//tr[" +
-                            "td[text()='1'] and " +
-                            "td[text()='2026-06-01'] and " +
-                            "td[text()='$135.42'] and " +
-                            "td[text()='travel'] and " +
-                            "td[text()='Airport rideshare to client site'] " +
-                            "]//button[text()='Review']"
-            ));
+            WebElement reviewBtn = wait.until(ExpectedConditions.elementToBeClickable(
+                    By.xpath(seededExpenseRowXpath() + "//button[text()='Review']")));
             reviewBtn.click();
             wait.until(ExpectedConditions.textToBePresentInElementLocated(
                     By.xpath("//div[@id='review-modal']//h3"),
@@ -217,15 +291,7 @@ public class ManagerDashboardSeleniumTest {
                     "Title should be: " + driver.getTitle());
 
             wait.until(ExpectedConditions.invisibilityOfElementLocated(
-                    By.xpath(
-                            "//tr[" +
-                                    "td[text()='1'] and " +
-                                    "td[text()='2026-06-01'] and " +
-                                    "td[text()='$135.42'] and " +
-                                    "td[text()='travel'] and " +
-                                    "td[text()='Airport rideshare to client site'] " +
-                                    "]//button[text()='Review']"
-                    )));
+                    By.xpath(seededExpenseRowXpath())));
         }
 
     }
