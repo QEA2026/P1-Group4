@@ -116,13 +116,26 @@ pipeline {
             }
         }
 
+        stage('Start Manager Frontend') {
+            steps {
+                dir('manager-app') {
+                    bat '''
+                    start "" /B "%PYTHON%" -m http.server 5500 --directory src\\main\\resources
+                    '''
+                }
+            }
+        }
+
         stage('Health Checks') {
             steps {
                 bat 'powershell -NoProfile -Command "if (-not (Test-NetConnection localhost -Port 5001 -InformationLevel Quiet)) { exit 1 }"'
                 bat 'powershell -NoProfile -Command "if (-not (Test-NetConnection localhost -Port 8080 -InformationLevel Quiet)) { exit 1 }"'
+                bat 'powershell -NoProfile -Command "if (-not (Test-NetConnection localhost -Port 5500 -InformationLevel Quiet)) { exit 1 }"'
+
 
                 echo 'Employee app is reachable on port 5001'
                 echo 'Manager app is reachable on port 8080'
+                echo 'Manager frontend is reachable on port 5500'
             }
         }
 
