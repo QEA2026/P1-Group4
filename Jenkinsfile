@@ -41,6 +41,44 @@ pipeline {
             }
         }
 
+        stage('Python Integration Tests') {
+            environment {
+                POSTGRES_DB = 'expense_manager'
+                POSTGRES_USER = 'postgres'
+                POSTGRES_PASSWORD = 'changeme'
+
+                DB_HOST = 'localhost'
+                DB_PORT = '5434'
+                DB_NAME = 'expense_manager_integration'
+                DB_USER = 'postgres'
+                DB_PASSWORD = 'changeme'
+            }
+
+            steps {
+                bat '"%COMPOSE%" -p p1-group4 up -d postgres'
+
+                bat 'powershell -NoProfile -Command "$ready = $false; for ($i = 0; $i -lt 30; $i++) { & $env:DOCKER exec expense-postgres pg_isready -U $env:POSTGRES_USER -d postgres; if ($LASTEXITCODE -eq 0) { $ready = $true; break }; Start-Sleep -Seconds 2 }; if (-not $ready) { exit 1 }"'
+
+                bat '"%DOCKER%" exec -e PGPASSWORD=%POSTGRES_PASSWORD% expense-postgres dropdb --if-exists --force -U %POSTGRES_USER% expense_manager_integration'
+                bat '"%DOCKER%" exec -e PGPASSWORD=%POSTGRES_PASSWORD% expense-postgres createdb -U %POSTGRES_USER% expense_manager_integration'
+
+                dir('employee-app') {
+                    bat '.venv\\Scripts\\python.exe -m pytest tests\\integration -v'
+                }
+            }
+
+            post {
+                always {
+                    bat(
+                        returnStatus: true,
+                        script: '"%DOCKER%" exec -e PGPASSWORD=%POSTGRES_PASSWORD% expense-postgres dropdb --if-exists --force -U %POSTGRES_USER% expense_manager_integration'
+                    )
+                }
+            }
+        }
+
+
+
         stage('Java Unit Tests') {
             steps {
                 dir('manager-app') {
@@ -104,7 +142,7 @@ pipeline {
             }
         }
 
-        stage('E2E Tests - Selenium') {
+        stage('E2E Tests - Selenium/Cucumber') {
             environment {
                 DB_HOST = 'localhost'
                 DB_PORT = '5434'
@@ -118,7 +156,7 @@ pipeline {
 
             steps {
                 dir('manager-app') {
-                    bat '"%MAVEN%" clean test -Pselenium'
+                    bat '"%MAVEN%" clean test -Pselenium "-Dcucumber.features=classpath:features" "-Dcucumber.plugin=pretty"'
                 }
             }
         }
@@ -130,5 +168,6 @@ pipeline {
                 }
             }
         }
+
     }
 }
