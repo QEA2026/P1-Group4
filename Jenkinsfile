@@ -183,4 +183,20 @@ pipeline {
         }
 
     }
+
+    post {
+        always {
+            bat '''
+            powershell -NoProfile -Command ^
+            "$connection = Get-NetTCPConnection -LocalPort 5500 -State Listen -ErrorAction SilentlyContinue; ^
+            if ($connection) { ^
+                $frontendPid = $connection.OwningProcess; ^
+                Write-Host ('Stopping manager frontend process PID ' + $frontendPid); ^
+                Stop-Process -Id $frontendPid -Force -ErrorAction SilentlyContinue ^
+            } else { ^
+                Write-Host 'No manager frontend process is listening on port 5500' ^
+            }"
+            '''
+        }
+    }
 }
