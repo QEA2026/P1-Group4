@@ -58,13 +58,10 @@
               }
             },
             "url": {
-              "raw": "http://127.0.0.1:5001/api/login",
+              "raw": "http://localhost:5001/api/login",
               "protocol": "http",
               "host": [
-                "127",
-                "0",
-                "0",
-                "1"
+                "localhost"
               ],
               "port": "5001",
               "path": [
@@ -136,13 +133,10 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "http://127.0.0.1:5001/api/status",
+              "raw": "http://localhost:5001/api/status",
               "protocol": "http",
               "host": [
-                "127",
-                "0",
-                "0",
-                "1"
+                "localhost"
               ],
               "port": "5001",
               "path": [
@@ -219,13 +213,10 @@
               }
             },
             "url": {
-              "raw": "http://127.0.0.1:5001/api/expenses",
+              "raw": "http://localhost:5001/api/expenses",
               "protocol": "http",
               "host": [
-                "127",
-                "0",
-                "0",
-                "1"
+                "localhost"
               ],
               "port": "5001",
               "path": [
@@ -306,13 +297,10 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "http://127.0.0.1:5001/api/expenses",
+              "raw": "http://localhost:5001/api/expenses",
               "protocol": "http",
               "host": [
-                "127",
-                "0",
-                "0",
-                "1"
+                "localhost"
               ],
               "port": "5001",
               "path": [
@@ -379,13 +367,10 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "http://127.0.0.1:5001/api/expenses?status=pending",
+              "raw": "http://localhost:5001/api/expenses?status=pending",
               "protocol": "http",
               "host": [
-                "127",
-                "0",
-                "0",
-                "1"
+                "localhost"
               ],
               "port": "5001",
               "path": [
@@ -466,13 +451,10 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "http://127.0.0.1:5001/api/expenses/history",
+              "raw": "http://localhost:5001/api/expenses/history",
               "protocol": "http",
               "host": [
-                "127",
-                "0",
-                "0",
-                "1"
+                "localhost"
               ],
               "port": "5001",
               "path": [
@@ -532,13 +514,10 @@
               }
             },
             "url": {
-              "raw": "http://127.0.0.1:5001/api/expenses/{{edit_expense_id}}",
+              "raw": "http://localhost:5001/api/expenses/{{edit_expense_id}}",
               "protocol": "http",
               "host": [
-                "127",
-                "0",
-                "0",
-                "1"
+                "localhost"
               ],
               "port": "5001",
               "path": [
@@ -616,13 +595,10 @@
               }
             },
             "url": {
-              "raw": "http://127.0.0.1:5001/api/expenses",
+              "raw": "http://localhost:5001/api/expenses",
               "protocol": "http",
               "host": [
-                "127",
-                "0",
-                "0",
-                "1"
+                "localhost"
               ],
               "port": "5001",
               "path": [
@@ -672,13 +648,10 @@
             "method": "DELETE",
             "header": [],
             "url": {
-              "raw": "http://127.0.0.1:5001/api/expenses/{{delete_expense_id}}",
+              "raw": "http://localhost:5001/api/expenses/{{delete_expense_id}}",
               "protocol": "http",
               "host": [
-                "127",
-                "0",
-                "0",
-                "1"
+                "localhost"
               ],
               "port": "5001",
               "path": [
@@ -733,13 +706,10 @@
             "method": "POST",
             "header": [],
             "url": {
-              "raw": "http://127.0.0.1:5001/api/logout",
+              "raw": "http://localhost:5001/api/logout",
               "protocol": "http",
               "host": [
-                "127",
-                "0",
-                "0",
-                "1"
+                "localhost"
               ],
               "port": "5001",
               "path": [
@@ -803,13 +773,10 @@
               }
             },
             "url": {
-              "raw": "http://127.0.0.1:5001/api/login",
+              "raw": "http://localhost:5001/api/login",
               "protocol": "http",
               "host": [
-                "127",
-                "0",
-                "0",
-                "1"
+                "localhost"
               ],
               "port": "5001",
               "path": [
@@ -866,13 +833,10 @@
               }
             },
             "url": {
-              "raw": "http://127.0.0.1:5001/api/login",
+              "raw": "http://localhost:5001/api/login",
               "protocol": "http",
               "host": [
-                "127",
-                "0",
-                "0",
-                "1"
+                "localhost"
               ],
               "port": "5001",
               "path": [
@@ -918,13 +882,10 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "http://127.0.0.1:5001/api/status",
+              "raw": "http://localhost:5001/api/status",
               "protocol": "http",
               "host": [
-                "127",
-                "0",
-                "0",
-                "1"
+                "localhost"
               ],
               "port": "5001",
               "path": [
@@ -983,13 +944,10 @@
               }
             },
             "url": {
-              "raw": "http://127.0.0.1:5001/api/login",
+              "raw": "http://localhost:5001/api/login",
               "protocol": "http",
               "host": [
-                "127",
-                "0",
-                "0",
-                "1"
+                "localhost"
               ],
               "port": "5001",
               "path": [
@@ -1050,13 +1008,10 @@
               }
             },
             "url": {
-              "raw": "http://127.0.0.1:5001/api/expenses",
+              "raw": "http://localhost:5001/api/expenses",
               "protocol": "http",
               "host": [
-                "127",
-                "0",
-                "0",
-                "1"
+                "localhost"
               ],
               "port": "5001",
               "path": [
@@ -1109,13 +1064,10 @@
               }
             },
             "url": {
-              "raw": "http://127.0.0.1:5001/api/expenses",
+              "raw": "http://localhost:5001/api/expenses",
               "protocol": "http",
               "host": [
-                "127",
-                "0",
-                "0",
-                "1"
+                "localhost"
               ],
               "port": "5001",
               "path": [
@@ -1165,13 +1117,10 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "http://127.0.0.1:5001/api/expenses?status=Invalid",
+              "raw": "http://localhost:5001/api/expenses?status=Invalid",
               "protocol": "http",
               "host": [
-                "127",
-                "0",
-                "0",
-                "1"
+                "localhost"
               ],
               "port": "5001",
               "path": [
@@ -1242,13 +1191,10 @@
               }
             },
             "url": {
-              "raw": "http://127.0.0.1:5001/api/expenses/99999",
+              "raw": "http://localhost:5001/api/expenses/99999",
               "protocol": "http",
               "host": [
-                "127",
-                "0",
-                "0",
-                "1"
+                "localhost"
               ],
               "port": "5001",
               "path": [
@@ -1310,13 +1256,10 @@
               }
             },
             "url": {
-              "raw": "http://127.0.0.1:5001/api/expenses/17",
+              "raw": "http://localhost:5001/api/expenses/17",
               "protocol": "http",
               "host": [
-                "127",
-                "0",
-                "0",
-                "1"
+                "localhost"
               ],
               "port": "5001",
               "path": [
@@ -1373,13 +1316,10 @@
             "method": "DELETE",
             "header": [],
             "url": {
-              "raw": "http://127.0.0.1:5001/api/expenses/99999",
+              "raw": "http://localhost:5001/api/expenses/99999",
               "protocol": "http",
               "host": [
-                "127",
-                "0",
-                "0",
-                "1"
+                "localhost"
               ],
               "port": "5001",
               "path": [
@@ -1434,13 +1374,10 @@
             "method": "POST",
             "header": [],
             "url": {
-              "raw": "http://127.0.0.1:5001/api/logout",
+              "raw": "http://localhost:5001/api/logout",
               "protocol": "http",
               "host": [
-                "127",
-                "0",
-                "0",
-                "1"
+                "localhost"
               ],
               "port": "5001",
               "path": [
@@ -1488,13 +1425,10 @@
               }
             },
             "url": {
-              "raw": "http://127.0.0.1:5001/api/expenses",
+              "raw": "http://localhost:5001/api/expenses",
               "protocol": "http",
               "host": [
-                "127",
-                "0",
-                "0",
-                "1"
+                "localhost"
               ],
               "port": "5001",
               "path": [
@@ -1548,13 +1482,10 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "http://127.0.0.1:5001/api/expenses",
+              "raw": "http://localhost:5001/api/expenses",
               "protocol": "http",
               "host": [
-                "127",
-                "0",
-                "0",
-                "1"
+                "localhost"
               ],
               "port": "5001",
               "path": [
@@ -1604,13 +1535,10 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "http://127.0.0.1:5001/api/expenses/history",
+              "raw": "http://localhost:5001/api/expenses/history",
               "protocol": "http",
               "host": [
-                "127",
-                "0",
-                "0",
-                "1"
+                "localhost"
               ],
               "port": "5001",
               "path": [

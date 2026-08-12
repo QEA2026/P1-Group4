@@ -49,7 +49,8 @@ VALUES
     ('bob', '$2b$12$MreaDe.pg57Q1OXHaG/ah.a.8wbXBPqg1ITHF0dDQKgbdcICUWd4C', 'employee'),
     ('vanessa', '$2b$12$8yGwrjrDogBQBr4akdl1zenxvj4plVQ6ssuXmsnv8Dy8s23rAGLW2', 'manager'),
     ('testmanager', '$2b$12$if4fWe4RhH4.msdbLDf9eeSlCIUR1J.dDYhaiTPQJOHnyFejRkkyS', 'manager'),
-    ('manager', '$2b$12$Qw.KcwMSmQKi0ZrROUdiwe3tMfNLRPSJ74T8PX/HA64rJA6K0BO/a', 'manager')
+    ('manager', '$2b$12$Qw.KcwMSmQKi0ZrROUdiwe3tMfNLRPSJ74T8PX/HA64rJA6K0BO/a', 'manager'),
+    ('test1', '$2b$12$4VfK4D0ZMOWoh4LU4i9Tfucxi.T0R42WQ6zYwEx46mO6iDFtcN1zC', 'employee')
     ON CONFLICT (username) DO NOTHING;
 
 
