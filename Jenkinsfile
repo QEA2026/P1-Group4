@@ -7,7 +7,7 @@ pipeline {
 
     environment {
         // Linux tools are installed on PATH
-        PYTHON = '/usr/bin/python3'
+        PYTHON = '/usr/bin/python3.11'
         MAVEN = '/usr/bin/mvn'
         DOCKER = '/usr/bin/docker'
         NEWMAN = '/usr/bin/newman'
