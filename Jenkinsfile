@@ -12,7 +12,7 @@ pipeline {
         NEWMAN = '/usr/bin/newman'
 
         JAVA_HOME = '/usr/lib/jvm/java-21-amazon-corretto.x86_64'
-        PATH+JAVA = "${JAVA_HOME}/bin"
+        PATH = "/usr/lib/jvm/java-21-amazon-corretto.x86_64/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
 
         FRONTEND_HOST = 'http://localhost:5500'
     }
