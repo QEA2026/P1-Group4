@@ -34,7 +34,9 @@ pipeline {
         stage('Python Setup') {
             steps {
                 dir('employee-app') {
+                    sh 'rm -rf .venv'
                     sh '"$PYTHON" -m venv .venv'
+                    sh '.venv/bin/python --version'
                     sh '.venv/bin/python -m pip install --upgrade pip'
                     sh '.venv/bin/python -m pip install -r requirements.txt'
                 }
