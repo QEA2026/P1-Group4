@@ -202,7 +202,7 @@
             <exclude>**/*IT.java</exclude>
             <exclude>**/*IntegrationTest.java</exclude>
             <!-- Selenium/Cucumber handled by profile -->
-            <exclude>**/*SeleniumTest.java</exclude>
+            <exclude>**/SeleniumTests/**</exclude>
             <exclude>**/CucumberRunner.java</exclude>
           </excludes>
         </configuration>
@@ -333,9 +333,11 @@
             <configuration>
 
               <includes>
-                <include>**/*SeleniumTest.java</include>
+                <include>**/SeleniumTests/**</include>
                 <include>**/CucumberRunner.java</include>
               </includes>
+
+              <excludes combine.self="override"/>
 
               <systemPropertyVariables>
 
