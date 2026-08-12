@@ -18,6 +18,10 @@ COPY --from=build /build/target/manager-app.jar ./app.jar
 
 EXPOSE 8080
 
+# no curl in this alpine image; wget is available and does the same job
+HEALTHCHECK --interval=10s --timeout=5s --start-period=15s --retries=3 \
+  CMD wget -qO- http://localhost:8080/expenses/pending > /dev/null || exit 1
+
 # DB_HOST/PORT/NAME/USER/PASSWORD (Postgres) come from docker-compose's
 # environment; expense.db.path is only ever set by tests, not here
 ENTRYPOINT ["java", "-jar", "app.jar"]
