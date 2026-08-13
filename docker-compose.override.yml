@@ -20,14 +20,42 @@ services:
       timeout: 5s
       retries: 5
 
+  # local .env sets DB_SSLMODE=disable (local postgres has no SSL);
+  # EC2's .env sets it to require (RDS enforces SSL). Was previously
+  # hardcoded to "disable" here, which broke every EC2 deploy.
   employee-app:
     environment:
-      # the local postgres image has no SSL, unlike RDS
-      DB_SSLMODE: disable
+      DB_SSLMODE: ${DB_SSLMODE}
 
   manager-app:
     environment:
-      DB_SSLMODE: disable
+      DB_SSLMODE: ${DB_SSLMODE}
+
+
+  # Collects the metrics
+  prometheus:
+    image: prom/prometheus
+    container_name: prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      # if you edit this file on a Mac and prometheus then dies with
+      # "resource deadlock avoided", macOS stuck a com.apple.provenance
+      # attribute on it. Fix with:  xattr -c prometheus.yml
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+    networks:
+      - expense-network
+
+  # Draws the graphs
+  grafana:
+    image: grafana/grafana
+    container_name: grafana
+    ports:
+      - "3000:3000"
+    depends_on:
+      - prometheus
+    networks:
+      - expense-network
 
 
 networks:
