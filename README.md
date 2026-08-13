@@ -1,5 +1,5 @@
 
-# Revature Expense Manager — Phase 2
+# Revature Expense Manager — Phase 2.
 
 A web-based expense tracking system with two applications sharing one SQLite database:
 
