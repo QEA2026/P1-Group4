@@ -1,0 +1,13 @@
+# Prometheus config - the apps just have to expose /metrics and sit there.
+global:
+  scrape_interval: 15s
+
+scrape_configs:
+  - job_name: 'prometheus'
+    static_configs:
+      - targets: ['localhost:9090']
+
+  # Our Flask app
+  - job_name: 'employee-app'
+    static_configs:
+      - targets: ['employee-app:5001']

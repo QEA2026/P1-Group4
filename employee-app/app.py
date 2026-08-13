@@ -8,7 +8,8 @@ API Layer: Flask routes for the employee side
 Run with: python app.py  (serves on http://localhost:5001)
 """
 from flask import Flask, request, jsonify, make_response, redirect
-
+from prometheus_flask_exporter import PrometheusMetrics
+from prometheus_client import Counter
 from api.auth import require_employee_auth, get_current_user
 from service.user_service import login, generate_jwt_token, get_user_by_token
 from service.expense_service import (
@@ -20,6 +21,22 @@ from service.expense_service import (
 )
 
 app = Flask(__name__)
+
+# --- Prometheus monitoring -------------------------------------------------
+# PrometheusMetrics hooks into Flask's before/after request events,
+# so every route below is timed and counted without us touching any of them.
+# It also adds a GET /metrics endpoint that Prometheus scrapes every 15s (see prometheus.yml).
+# group_by="endpoint" makes /api/expenses/1 and /api/expenses/2 report as the same series.
+metrics = PrometheusMetrics(app, group_by="endpoint")
+
+# Just a version label so a dashboard can show which build is deployed.
+metrics.info("employee_app_info", "Employee app build info", version="1.0.0")
+
+# so we can tell when something is actually broken and when its a user mistake
+expenses_submitted = Counter(
+    "expenses_submitted_total", "Expenses submitted", ["outcome"]
+)
+# ---------------------------------------------------------------------------
 
 
 @app.route("/")
@@ -122,11 +139,17 @@ def submit_expense_route():
 
     user_id = get_current_user()[0]
     result = submit_new_expense(user_id, amount, description, category)
+    # The .inc() calls below just bump a counter for the graph - they don't
+    # change any behaviour. Each branch tags itself so the dashboard can tell
+    # user mistakes (invalid) apart from things actually breaking (error).
     if result is False:
+        expenses_submitted.labels(outcome="invalid").inc()
         return jsonify({"error": "Invalid amount or description"}), 400
     elif result is None:
+        expenses_submitted.labels(outcome="error").inc()
         return jsonify({"error": "An error occurred while submitting the expense"}), 500
     else:
+        expenses_submitted.labels(outcome="success").inc()
         return jsonify({
             "message": "Expense submitted successfully",
             "expense_id": result,

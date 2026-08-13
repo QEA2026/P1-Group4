@@ -32,6 +32,32 @@ services:
       DB_SSLMODE: ${DB_SSLMODE}
 
 
+  # Collects the metrics
+  prometheus:
+    image: prom/prometheus
+    container_name: prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      # if you edit this file on a Mac and prometheus then dies with
+      # "resource deadlock avoided", macOS stuck a com.apple.provenance
+      # attribute on it. Fix with:  xattr -c prometheus.yml
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+    networks:
+      - expense-network
+
+  # Draws the graphs
+  grafana:
+    image: grafana/grafana
+    container_name: grafana
+    ports:
+      - "3000:3000"
+    depends_on:
+      - prometheus
+    networks:
+      - expense-network
+
+
 networks:
   expense-network:
 
